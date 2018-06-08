@@ -1,0 +1,6 @@
+This is the XEmacs with Mule supported by Japanese input using SKK, SJ3
+and Canna. If you use with SJ3 or SKK, you should be installed sj3serv or
+skkserv in advance. SKK is supported as already builtin. Also it will
+support several input methods under leim. 
+
+WWW: http://www.xemacs.neoscientists.org/
