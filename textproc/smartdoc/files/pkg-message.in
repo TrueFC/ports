@@ -1,0 +1,19 @@
+************************************************************************
+If you would like to use sdoc-mode in Emacs, install as follows:
+
+  # %%INSTALL_DATA%% %%EXAMPLESDIR%%/sdoc-mode.el %%EMACSLISPDIR%%
+  # %%INSTALL_DATA%% %%EXAMPLESDIR%%/sdoc-helper.el %%EMACSLISPDIR%%
+
+or in XEmacs, install as follows:
+
+  # %%INSTALL_DATA%% %%EXAMPLESDIR%%/sdoc-mode.el %%XEMACSLISPDIR%%
+  # %%INSTALL_DATA%% %%EXAMPLESDIR%%/sdoc-helper.el %%XEMACSLISPDIR%%
+
+and then add your .emacs file below:
+
+(setq auto-mode-alist
+      (append '(("\\.sdoc$" . sdoc-mode)) auto-mode-alist))
+(setq sgml-quick-keys t)
+(autoload 'sdoc-mode "sdoc-mode" nil t)
+
+************************************************************************

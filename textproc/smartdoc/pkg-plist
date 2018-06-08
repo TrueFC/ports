@@ -1,0 +1,5 @@
+bin/sdoc
+%%JAVAJARDIR%%/SmartDoc.jar
+%%DTDDIR%%/PureSmartDoc.dtd
+@xmlcatmgr %%DTDDIR%%/catalog.xml
+@xmlcatmgr %%DTDDIR%%/catalog
