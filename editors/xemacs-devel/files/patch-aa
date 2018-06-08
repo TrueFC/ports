@@ -1,0 +1,20 @@
+--- Makefile.in.in.org	2016-07-27 07:00:08.262499000 +0900
++++ Makefile.in.in	2016-07-27 07:01:18.236912000 +0900
+@@ -136,7 +136,7 @@
+ libdir=@libdir@
+ 
+ ## Where to install XEmacs's man pages, and what extension they should have.
+-mandir=@mandir@
++mandir=@mandir@/man1
+ manext=.1
+ 
+ ## Where to install and expect the info files describing XEmacs.  In the
+@@ -588,7 +588,7 @@
+ 
+ ## ==================== Cleaning up and miscellanea ====================
+ 
+-.PHONY: mostlyclean clean distclean realclean extraclean elcclean
++.PHONY: mostlyclean clean distclean realclean extraclean elcclean ${archlibdir}
+ .PHONY: distclean-noconfig realclean-noconfig extraclean-noconfig
+ .PHONY: top-mostlyclean top-clean top-distclean top-realclean top-extraclean
+ .PHONY: top-distclean-noconfig top-realclean-noconfig top-extraclean-noconfig
