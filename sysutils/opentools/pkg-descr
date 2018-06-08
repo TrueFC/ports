@@ -1,0 +1,7 @@
+OpenTools is a collection of gadget tools for using BSD Unix. It is not
+a great tool, such as remotely logging in on a terminal by specifying a
+remote host, remotely logging in to the home machine and starting emacs's
+mail client on a terminal, but for Unix users Scripts that save one
+effort. 
+
+WWW: https://github.com/TrueFC/opentools
