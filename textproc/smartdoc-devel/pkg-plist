@@ -1,0 +1,9 @@
+@comment $FreeBSD: head/textproc/smartdoc-devel/pkg-plist 155546 2006-02-08 19:51:11Z kris $
+bin/sdoc
+%%JAVAJARDIR%%/SmartDoc.jar
+%%JAVAJARDIR%%/isorelax.jar
+%%JAVAJARDIR%%/jakarta-oro.jar
+%%JAVAJARDIR%%/tex2mathml.jar
+%%DTDDIR%%/PureSmartDoc.dtd
+@xmlcatmgr %%DTDDIR%%/catalog.xml
+@xmlcatmgr %%DTDDIR%%/catalog

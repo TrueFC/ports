@@ -1,0 +1,5 @@
+#! /bin/sh
+#
+# $FreeBSD: head/textproc/smartdoc-devel/files/sdoc.sh.in 128067 2005-02-05 04:01:25Z hq $
+
+JAVA_VERSION="1.6+" "%%LOCALBASE%%/bin/java" -jar "%%JAVAJARDIR%%/SmartDoc.jar" "$@"

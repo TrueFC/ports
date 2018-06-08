@@ -1,0 +1,9 @@
+SmartDoc is the XML utility to create documents. 
+
+It can convert SmartDoc format document to HTML4.0, HTML3.2, LaTeX2e
+and Java Help. This is the development version(beta). If you use the
+stable one, install textproc/smartdoc. For more information about
+SmartDoc, see below: 
+
+WWW: http://www.asamioffice.com/ja/2010/smartdoc/index.html
+
