@@ -1,0 +1,586 @@
+#-*- mode: Makefile; tab-width: 4; -*-
+
+OPTIONS_DEFINE=			DEBUG \
+						DESKTOP \
+						EXPERIMENTAL \
+						ERROR_CHECKING \
+						XEPKGS
+#OPTIONS_DEFINE_amd64=	SYSTEM_MALLOC
+
+OPTIONS_DEFAULT=		BERKDB \
+						CLASH_DETECTION \
+						DIALOGS_MOTIF \
+						GIF \
+						JPEG \
+						MENUBARS_LUCID \
+						MULE \
+						NATIVE \
+						PNG \
+						POP \
+						SCROLLBARS_MOTIF \
+						TIFF \
+						TOOLBARS \
+						TTY \
+						WIDGETS_MOTIF \
+						WMCOMMAND \
+						X11 \
+						XEPKGS \
+						XFACE \
+						XFT_EMACS \
+						XFT_GAUGES \
+						XFT_MENUBARS \
+						XFT_TABS \
+						XIM_XLIB \
+						XPM
+OPTIONS_DEFAULT_amd64=	SYSTEM_MALLOC \
+						PDUMP
+
+DEBUG_DESC=				Enable additional debugging information
+DESKTOP_DESC=			Use Gnome desktop environments
+EXPERIMENTAL_DESC=		Enable experimental features (kkcc, newgc)
+ERROR_CHECKING_DESC=	Compile with internal error-checking added
+XEPKGS_DESC=			Install Basic XEmacs elisp packages(xepkg-latin1)
+DESKTOP_IMPLIES=		X11 GNOME
+EXPERIMENTAL_IMPLIES=	KKCC NEWGC
+DEBUG_CONFIGURE_ON=					--with-debug
+DEBUG_CONFIGURE_OFF=				--disable-debug
+ERROR_CHECKING_CONFIGURE_ON=		--with-error-checking=all
+ERROR_CHECKING_CONFIGURE_OFF=		--disable-error-checking
+XEPKGS_RUN_DEPENDS=		xepkg-latin1-devel>=1.0:${PORTSDIR}/editors/xepkg-latin1
+
+OPTIONS_GROUP=			WINDOW_SYSTEM
+OPTIONS_GROUP_WINDOW_SYSTEM= GNOME \
+						GTK \
+						WMCOMMAND \
+						MSW \
+						X11 \
+						XFT_EMACS \
+						XFT_GAUGES \
+						XFT_MENUBARS \
+						XFT_TABS \
+						XMU
+WINDOW_SYSTEM_DESC=		Window System
+GNOME_DESC=				Use GNOME on the X Window System
+GTK_DESC=				Use GTK on the X Window System
+WMCOMMAND_DESC=			With realized leader window which will not keep the WM_COMMAND property
+MSW_DESC=				Support MS Windows as a window system (only under Cygwin and MinGW)
+X11_DESC=				Support the X Window System
+XFT_EMACS_DESC=			Xft font rendering and anti-aliasing for emacs
+XFT_GAUGES_DESC=		Xft font rendering and anti-aliasing for gauges
+XFT_MENUBARS_DESC=		Xft font rendering and anti-aliasing for menubars
+XFT_TABS_DESC=			Xft font rendering and anti-aliasing for tabs
+XMU_DESC=				For systems whose vendors ship Xmu
+GNOME_IMPLIES=			X11
+GTK_IMPLIES=			X11 XIM_NO DIALOGS_GTK MENUBARS_GTK SCROLLBARS_GTK WIDGETS_GTK
+X11_IMPLIES=			GIF JPEG PNG XFACE TIFF
+XFT_EMACS_IMPLIES=		X11
+XFT_GAUGES_IMPLIES=		X11
+XFT_MENUBARS_IMPLIES=	X11
+XFT_TABS_IMPLIES=		X11
+X11_PREVENTS=			MSW
+MSW_PREVENTS=			X11
+MSW_PREVENTS_MSG=		MS Windows imcompatible with X Window System
+X11_PREVENTS_MSG=		X Window System imcompatible with MS Windows
+GNOME_CONFIGURE_ON=		--with-gnome
+GTK_CONFIGURE_ON=		--with-gtk
+GTK_USE=				GNOME+=gtk12
+MSW_CONFIGURE_ON=		--with-msw
+MSW_CONFIGURE_OFF=		--with-msw=no
+WMCOMMAND_CONFIGURE_ON=	--with-wmcommand=yes
+WMCOMMAND_CONFIGURE_OFF=--with-wmcommand=no
+X11_CFLAGS+=			-I${LOCALBASE}/include/libpng16
+X11_CONFIGURE_ON=		--with-x
+X11_CONFIGURE_OFF=		--with-x=no
+X11_BUILD_DEPENDS=		fontconfig>=2.11:${PORTSDIR}/x11-fonts/fontconfig
+X11_USE=				XORG=x11,xpm,xbitmaps
+XFT_EMACS_VARS=			XFT_CONFIGURE_VALUE+=emacs
+XFT_GAUGES_VARS=		XFT_CONFIGURE_VALUE+=gauges
+XFT_MENUBARS_VARS=		XFT_CONFIGURE_VALUE+=menubars
+XFT_TABS_VARS=			XFT_CONFIGURE_VALUE+=tabs
+XFT_EMACS_VARS_OFF=		XFT_CONFIGURE_VALUE+=noemacs
+XFT_GAUGES_VARS_OFF=	XFT_CONFIGURE_VALUE+=nogauges
+XFT_MENUBARS_VARS_OFF=	XFT_CONFIGURE_VALUE+=nomenubars
+XFT_TABS_VARS_OFF=		XFT_CONFIGURE_VALUE+=notabs
+XFT_CONFIGURE_ON=		--with-xft=${XFT_CONFIGURE_VALUE:ts,}
+XMU_CONFIGURE_ON=		--with-xmu=yes
+
+OPTIONS_GROUP+=			GUI
+OPTIONS_GROUP_GUI=		ATHENA_3D \
+						ATHENA_95 \
+						ATHENA_NEXT \
+						ATHENA_XAW \
+						ATHENA_XPM \
+						CDE \
+						DIALOGS_ATHENA \
+						DIALOGS_GTK \
+						DIALOGS_LUCID \
+						DIALOGS_MOTIF \
+						DIALOGS_NO \
+						DRAGNDROP \
+						EXTERNAL_WIDGET \
+						MENUBARS_GTK \
+						MENUBARS_LUCID \
+						MENUBARS_MOTIF \
+						MENUBARS_NO \
+						OFFIX \
+						SCROLLBARS_ATHENA \
+						SCROLLBARS_GTK \
+						SCROLLBARS_LUCID \
+						SCROLLBARS_MOTIF \
+						SCROLLBARS_NO \
+						TOOLBARS \
+						WIDGETS_ATHENA \
+						WIDGETS_GTK \
+						WIDGETS_LUCID \
+						WIDGETS_MOTIF \
+						WIDGETS_NO
+GUI_DESC=				GUI component
+ATHENA_3D_DESC=			Link with the 3d Athena library
+ATHENA_95_DESC=			Link with the 95 Athena library
+ATHENA_NEXT_DESC=		Link with the next Athena library
+ATHENA_XAW_DESC=		Link with the xaw Athena library
+ATHENA_XPM_DESC=		Link with the xpm Athena library
+CDE_DESC=				Support CDE drag and drop API
+DIALOGS_ATHENA_DESC=	Dialogs type athena
+DIALOGS_GTK_DESC=		Dialogs type gtk
+DIALOGS_LUCID_DESC=		Dialogs type lucid
+DIALOGS_MOTIF_DESC=		Dialogs type motif
+DIALOGS_NO_DESC=		No Dialogs
+DRAGNDROP_DESC=			Support generic drag and drop API
+EXTERNAL_WIDGET_DESC=	Support XEmacs server for text widgets in other applications
+MENUBARS_GTK_DESC=		Menubars type gtk
+MENUBARS_LUCID_DESC=	Menubars type lucid
+MENUBARS_MOTIF_DESC=	Menubars type motif
+MENUBARS_NO_DESC=		Menubars type no
+OFFIX_DESC=				Support OffiX drag and drop API
+SCROLLBARS_ATHENA_DESC=	Scrollbars type athena
+SCROLLBARS_GTK_DESC=	Scrollbars type gtk
+SCROLLBARS_LUCID_DESC=	Scrollbars type lucid
+SCROLLBARS_MOTIF_DESC=	Scrollbars type motif
+SCROLLBARS_NO_DESC=		Scrollbars type no
+TOOLBARS_DESC=			Toolbar support
+WIDGETS_ATHENA_DESC=	Widgets type athena
+WIDGETS_GTK_DESC=		Widgets type gtk
+WIDGETS_LUCID_DESC=		Widgets type lucid
+WIDGETS_MOTIF_DESC=		Widgets type motif
+WIDGETS_NO_DESC=		Widgets type no
+CDE_IMPLIES=			DRAGNDROP
+DIALOGS_ATHENA_IMPLIES=	WIDGETS_ATHENA
+DIALOGS_GTK_IMPLIES=	WIDGETS_GTK
+DIALOGS_LUCID_IMPLIES=	WIDGETS_LUCID
+DIALOGS_MOTIF_IMPLIES=	WIDGETS_MOTIF
+MENUBARS_LUCID_IMPLIES=	XFS
+OFFIX_IMPLIES=			DRAGNDROP
+TOOLBARS_IMPLIES=		XPM
+ATHENA_3D_PREVENTS=		ATHENA_95 ATHENA_NEXT ATHENA_XAW ATHENA_XPM
+ATHENA_95_PREVENTS=		ATHENA_3D ATHENA_NEXT ATHENA_XAW ATHENA_XPM
+ATHENA_NEXT_PREVENTS=	ATHENA_95 ATHENA_3D ATHENA_XAW ATHENA_XPM
+ATHENA_XAW_PREVENTS=	ATHENA_95 ATHENA_NEXT ATHENA_3D ATHENA_XPM
+ATHENA_XPM_PREVENTS=	ATHENA_95 ATHENA_NEXT ATHENA_XAW ATHENA_3D
+DIALOGS_ATHENA_PREVENTS=DIALOGS_GTK DIALOGS_LUCID DIALOGS_MOTIF DIALOGS_NO
+DIALOGS_GTK_PREVENTS=	DIALOGS_ATHENA DIALOGS_LUCID DIALOGS_MOTIF DIALOGS_NO
+DIALOGS_LUCID_PREVENTS=	DIALOGS_GTK DIALOGS_ATHENA DIALOGS_MOTIF DIALOGS_NO
+DIALOGS_MOTIF_PREVENTS=	DIALOGS_GTK DIALOGS_LUCID DIALOGS_ATHENA DIALOGS_NO
+DIALOGS_NO_PREVENTS=	DIALOGS_GTK DIALOGS_LUCID DIALOGS_ATHENA DIALOGS_MOTIF
+MENUBARS_GTK_PREVENTS=	MENUBARS_LUCID MENUBARS_MOTIF MENUBARS_NO
+MENUBARS_LUCID_PREVENTS=MENUBARS_GTK MENUBARS_MOTIF MENUBARS_NO
+MENUBARS_MOTIF_PREVENTS=MENUBARS_GTK MENUBARS_LUCID MENUBARS_NO
+MENUBARS_NO_PREVENTS=	MENUBARS_GTK MENUBARS_MOTIF MENUBARS_LUCID
+SCROLLBARS_ATHENA_PREVENTS=	SCROLLBARS_GTK SCROLLBARS_LUCID SCROLLBARS_MOTIF SCROLLBARS_NO
+SCROLLBARS_GTK_PREVENTS=	SCROLLBARS_ATHENA SCROLLBARS_LUCID SCROLLBARS_MOTIF SCROLLBARS_NO
+SCROLLBARS_LUCID_PREVENTS=	SCROLLBARS_GTK SCROLLBARS_ATHENA SCROLLBARS_MOTIF SCROLLBARS_NO
+SCROLLBARS_MOTIF_PREVENTS=	SCROLLBARS_GTK SCROLLBARS_LUCID SCROLLBARS_ATHENA SCROLLBARS_NO
+SCROLLBARS_NO_PREVENTS=		SCROLLBARS_GTK SCROLLBARS_LUCID SCROLLBARS_MOTIF SCROLLBARS_ATHENA
+WIDGETS_ATHENA_PREVENTS=WIDGETS_GTK WIDGETS_LUCID WIDGETS_MOTIF WIDGETS_NO
+WIDGETS_GTK_PREVENTS=	WIDGETS_ATHENA WIDGETS_LUCID WIDGETS_MOTIF WIDGETS_NO
+WIDGETS_LUCID_PREVENTS=	WIDGETS_GTK WIDGETS_ATHENA WIDGETS_MOTIF WIDGETS_NO
+WIDGETS_MOTIF_PREVENTS=	WIDGETS_GTK WIDGETS_LUCID WIDGETS_ATHENA WIDGETS_NO
+WIDGETS_NO_PREVENTS=	WIDGETS_GTK WIDGETS_LUCID WIDGETS_MOTIF WIDGETS_ATHENA
+ATHENA_3D_PREVENTS_MSG=		3d Athena library imcompatible with other libraries
+ATHENA_95_PREVENTS_MSG=		95 Athena library imcompatible with other libraries
+ATHENA_NEXT_PREVENTS_MSG=	next Athena library imcompatible with other libraries
+ATHENA_XAW_PREVENTS_MSG=	xaw Athena library imcompatible with other libraries
+ATHENA_XPM_PREVENTS_MSG=	xpm Athena library imcompatible with other libraries
+DIALOGS_ATHENA_PREVENTS_MSG=athena type dialogs imcompatible with gtk, lucid, motif and no
+DIALOGS_GTK_PREVENTS_MSG=	gtk type dialogs imcompatible with athena, lucid, motif and no
+DIALOGS_LUCID_PREVENTS_MSG=	lucid type dialogs imcompatible with athena, gtk, motif and no
+DIALOGS_MOTIF_PREVENTS_MSG=	motif type dialogs imcompatible with athena, gtk, lucid and no
+DIALOGS_NO_PREVENTS_MSG=	no type dialogs imcompatible with athena, gtk, motif and lucid
+MENUBARS_GTK_PREVENTS_MSG=	gtk type menubars imcompatible with lucid, motif and no
+MENUBARS_LUCID_PREVENTS_MSG=lucid type menubars imcompatible with gtk, motif and no
+MENUBARS_MOTIF_PREVENTS_MSG=motif type menubars imcompatible with gtk, lucid and no
+MENUBARS_NO_PREVENTS_MSG=	no type menubars imcompatible with gtk, motif and lucid
+SCROLLBARS_ATHENA_PREVENTS_MSG=	athena type scrollbars imcompatible with gtk, motif, lucid and no
+SCROLLBARS_GTK_PREVENTS_MSG=	gtk type scrollbars imcompatible with motif, athena ,lucid and no
+SCROLLBARS_LUCID_PREVENTS_MSG=	lucid type scrollbars imcompatible with motif, athena , gtk and no
+SCROLLBARS_MOTIF_PREVENTS_MSG=	motif type scrollbars imcompatible with lucid, athena, gtk  and no
+SCROLLBARS_NO_PREVENTS_MSG=		no type scrollbars imcompatible with motif, athena, gtk  and lucid
+WIDGETS_ATHENA_PREVENTS_MSG=athena type widgets imcompatible with motif, lucid, gtk and no
+WIDGETS_GTK_PREVENTS_MSG=	gtk type widgets imcompatible with lucid, motif, athena and no
+WIDGETS_LUCID_PREVENTS_MSG=	lucid type widgets imcompatible with motif, athena, gtk and no
+WIDGETS_MOTIF_PREVENTS_MSG=	motif type widgets imcompatible with lucid, athena, gtk and no
+WIDGETS_NO_PREVENTS_MSG=	no type widgets imcompatible with motif, athena, gtk and lucid
+ATHENA_3D_CONFIGURE_ON=			--with-athena=3d
+ATHENA_95_CONFIGURE_ON=			--with-athena=95
+ATHENA_NEXT_CONFIGURE_ON=		--with-athena=next
+ATHENA_XAW_CONFIGURE_ON=		--with-athena=xaw
+ATHENA_XPM_CONFIGURE_ON=		--with-athena=xpm
+CDE_CONFIGURE_ON=				--with-cde
+DIALOGS_ATHENA_CONFIGURE_ON=	--with-dialogs=athena
+DIALOGS_GTK_CONFIGURE_ON=		--with-dialogs=gtk
+DIALOGS_LUCID_CONFIGURE_ON=		--with-dialogs=lucid
+DIALOGS_MOTIF_CONFIGURE_ON=		--with-dialogs=motif
+DIALOGS_NO_CONFIGURE_ON=		--with-dialogs=no
+DRAGNDROP_CONFIGURE_ON=			--with-dragndrop
+EXTERNAL_WIDGET_CONFIGURE_ON=	--with-external-widget
+MENUBARS_GTK_CONFIGURE_ON=		--with-menubars=gtk
+MENUBARS_LUCID_CONFIGURE_ON=	--with-menubars=lucid
+MENUBARS_MOTIF_CONFIGURE_ON=	--with-menubars=motif
+MENUBARS_NO_CONFIGURE_ON=		--with-menubars=no
+OFFIX_CONFIGURE_ON=				--with-offix
+SCROLLBARS_ATHENA_CONFIGURE_ON=	--with-scrollbars=athena
+SCROLLBARS_GTK_CONFIGURE_ON=	--with-scrollbars=gtk
+SCROLLBARS_LUCID_CONFIGURE_ON=	--with-scrollbars=lucid
+SCROLLBARS_MOTIF_CONFIGURE_ON=	--with-scrollbars=motif
+SCROLLBARS_NO_CONFIGURE_ON=		--with-scrollbars=no
+TOOLBARS_CONFIGURE_ON=			--with-toolbars
+WIDGETS_ATHENA_CONFIGURE_ON=	--with-widgets=athena
+WIDGETS_GTK_CONFIGURE_ON=		--with-widgets=gtk
+WIDGETS_LUCID_CONFIGURE_ON=		--with-widgets=lucid
+WIDGETS_MOTIF_CONFIGURE_ON=		--with-widgets=motif
+WIDGETS_NO_CONFIGURE_ON=		--with-widgets=no
+ATHENA_3D_LIB_DEPENDS=			libXaw3d.so:${PORTSDIR}/x11-toolkits/Xaw3d
+OFFIX_LIB_DEPENDS=				libDnd.so:${PORTSDIR}/x11/libdnd
+
+OPTIONS_GROUP+=			TTYS
+OPTIONS_GROUP_TTYS=		TTY \
+						NCURSES \
+						GPM
+TTYS_DESC=				TTY redisplay
+TTY_DESC=				Support ttys
+NCURSES_DESC=			Use the ncurses library for tty support
+GPM_DESC=				Support the GPM mouse library for ttys
+NCURSES_IMPLIES=		TTY
+GPM_IMPLIES=			TTY
+TTY_CONFIGURE_ON=		--with-tty=yes
+TTY_CONFIGURE_OFF=		--with-tty=no
+
+OPTIONS_GROUP+=			IMAGE
+OPTIONS_GROUP_IMAGE=	GIF \
+						JPEG \
+						PNG \
+						TIFF \
+						XFACE \
+						XPM
+IMAGE_DESC=				Images
+GIF_DESC=				Support for GIF images
+JPEG_DESC=				Support JPEG images
+PNG_DESC=				Support PNG images
+XPM_DESC=				Support XPM images
+XFACE_DESC=				Support X-Face mail headers
+TIFF_DESC=				Support TIFF images
+GIF_CONFIGURE_ON=		--with-gif
+JPEG_CONFIGURE_ON=		--with-jpeg
+PNG_CONFIGURE_ON=		--with-png
+TIFF_CONFIGURE_ON=		--with-tiff
+XFACE_CONFIGURE_ON=		--with-xface
+XPM_CONFIGURE_ON=		--with-xpm
+GIF_CONFIGURE_OFF=		--with-gif=no
+JPEG_CONFIGURE_OFF=		--with-jpeg=no
+PNG_CONFIGURE_OFF=		--with-png=no
+TIFF_CONFIGURE_OFF=		--with-tiff=no
+XFACE_CONFIGURE_OFF=	--with-xface=no
+XPM_CONFIGURE_OFF=		--with-xpm=no
+GIF_LIB_DEPENDS=		libgif.so:${PORTSDIR}/graphics/giflib
+JPEG_LIB_DEPENDS=		libjpeg.so:${PORTSDIR}/graphics/jpeg-turbo
+PNG_LIB_DEPENDS=		libpng.so:${PORTSDIR}/graphics/png
+TIFF_LIB_DEPENDS=		libtiff.so:${PORTSDIR}/graphics/tiff
+XFACE_LIB_DEPENDS=		libcompface.so:${PORTSDIR}/mail/faces
+XPM_USE=				XORG+=xpm
+
+OPTIONS_GROUP+=			SOUND
+OPTIONS_GROUP_SOUND=	ALSA \
+						ESD \
+						NAS \
+						NATIVE
+SOUND_DESC=				Sound
+ALSA_DESC=				Advanced Linux Sound Architecture
+ESD_DESC=				Enlightened Sound Daemon
+NAS_DESC=				Network Audio System
+NATIVE_DESC=			Native sound
+ALSA_VARS=				SOUND_CONFIGURE_VALUE+=alsa
+ESD_VARS=				SOUND_CONFIGURE_VALUE+=esd
+NAS_VARS=				SOUND_CONFIGURE_VALUE+=nas
+NATIVE_VARS=			SOUND_CONFIGURE_VALUE+=native
+ALSA_VARS_OFF=			SOUND_CONFIGURE_VALUE+=noalsa
+ESD_VARS_OFF=			SOUND_CONFIGURE_VALUE+=noesd
+NAS_VARS_OFF=			SOUND_CONFIGURE_VALUE+=nonas
+NATIVE_VARS_OFF=		SOUND_CONFIGURE_VALUE+=nonative
+CONFIGURE_ARGS+=		--with-sound=${SOUND_CONFIGURE_VALUE:ts,}
+
+OPTIONS_GROUP+=			I18N
+OPTIONS_GROUP_I18N=		CANNA \
+						MULE \
+						WNN \
+						WNN6 \
+						XFS \
+						XIM_MOTIF \
+						XIM_NO \
+						XIM_XLIB
+I18N_DESC=				Internationalization
+CANNA_DESC=				Canna Japanese input method
+MULE_DESC=				Multi-Lingual Emacs for non-Latin-1(Asian etc.)
+WNN_DESC=				Wnn Asian language input method
+WNN6_DESC=				Wnn6 Asian language input method
+XFS_DESC=				Internationalized menubar via XFontSets
+XIM_MOTIF_DESC=			X Input Method protocol with motif
+XIM_NO_DESC=			Nothing support X Input Method
+XIM_XLIB_DESC=			X Input Method protocol with xlib
+CANNA_IMPLIES=			MULE
+WNN_IMPLIES=			MULE
+XIM_MOTIF_IMPLIES=		MULE
+XIM_XLIB_IMPLIES=		MULE
+XFS_PREVENTS=			XIM_MOTIF XFT_EMACS XFT_GAUGES XFT_MENUBARS XFT_TABS
+XIM_MOTIF_PREVENTS=		XIM_XLIB
+XIM_XLIB_PREVENTS=		XIM_MOTIF
+XFS_PREVENTS=			XIM_MOTIF
+XIM_MOTIF_PREVENTS_MSG=	XIM motif incompatible with XIM xlib
+XIM_XLIB_PREVENTS_MSG=	XIM xlib incompatible with XIM motif
+XFS_PREVENTS_MSG=		XFontSets incompatible with XIM motif and XFT
+MULE_USES=				gettext
+CANNA_CONFIGURE_ON=		--with-canna
+MULE_CONFIGURE_ON=		--with-mule
+WNN_CONFIGURE_ON=		--with-wnn
+WNN6_CONFIGURE_ON=		--with-wnn6
+XFS_CONFIGURE_ON=		--with-xfs
+CANNA_CONFIGURE_OFF=	--with-canna=no
+WNN_CONFIGURE_OFF=		--with-wnn=no
+WNN6_CONFIGURE_OFF=		--with-wnn6=no
+XIM_MOTIF_CONFIGURE_ON=	--with-xim=motif
+XIM_NO_CONFIGURE_ON=	--with-xim=no
+XIM_XLIB_CONFIGURE_ON=	--with-xim=xlib
+CANNA_LIB_DEPENDS=		libcanna.so:${PORTSDIR}/japanese/canna-lib
+MULE_RUN_DEPENDS=		xepkg-mule-devel>=1.0:${PORTSDIR}/editors/xepkg-mule
+WNN_LIB_DEPENDS=		libwnn.so:${PORTSDIR}/japanese/FreeWnn-lib
+WNN6_LIB_DEPENDS=		libwnn6.so:${PORTSDIR}/japanese/Wnn6-lib
+
+OPTIONS_GROUP+=			FILE
+OPTIONS_GROUP_FILE=		DEFAULT_EOL_DETECTION \
+						CLASH_DETECTION \
+						ZLIB
+FILE_DESC=				File-related
+DEFAULT_EOL_DETECTION_DESC=	Turns on default auto-detection of end-of-line type when reading a file
+CLASH_DETECTION_DESC=	Disable use of lock files to detect multiple edits of the same file.
+ZLIB_DESC=				Support inflate (de)compression internally
+DEFAULT_EOL_DETECTION_CONFIGURE_ON=	--with-default-eol-detection
+CLASH_DETECTION_CONFIGURE_ON=		--with-clash-detection
+ZLIB_CONFIGURE_ON=					--with-zlib
+
+OPTIONS_GROUP+=			DATABASE
+OPTIONS_GROUP_DATABASE=	BERKDB \
+						DBM \
+						GNUDBM \
+						NO_DATABASE \
+						LDAP \
+						POSTGRESQL
+DATABASE_DESC=			Databases
+BERKDB_DESC=			Support for Berkeley database
+DBM_DESC=				Support for DBM
+GNUDBM_DESC=			Support for GNU DBM
+LDAP_DESC=				Support the LDAP protocol
+POSTGRESQL_DESC=		Support the PostgreSQL RDBMS
+BERKDB_PREVENTS=		NO_DATABASE
+DBM_PREVENTS=			NO_DATABASE
+GNUDBM_PREVENTS=		NO_DATABASE
+NO_DATABASE_PREVENTS=	BERKDB DBM GNUDBM
+BERKDB_PREVENTS_MSG=	berkdb incompatible with no
+DBM_PREVENTS_MSG=		dbm incompatible with no
+GNUDBM_PREVENTS_MSG=	gnudbm incompatible with no
+NO_DATABASE_PREVENTS_MSG=	no incompatible with berkdb, dbm and gnudbm
+BERKDB_VARS=			DATABASE_CONFIGURE_VALUE+=berkdb
+DBM_VARS=				DATABASE_CONFIGURE_VALUE+=dbm
+GDBM_VARS=				DATABASE_CONFIGURE_VALUE+=gdbm
+CONFIGURE_ARGS+=		--with-database=${DATABASE_CONFIGURE_VALUE:ts,}
+LDAP_CONFIGURE_ON=		--with-ldap
+LDAP_CONFIGURE_OFF=		--with-ldap=no
+POSTGRESQL_CONFIGURE_ON=--with-postgresql
+POSTGRESQL_USES=		pgsql
+LDAP_USE=				OPENLDAP=yes
+POSTGRES_CONFIGURE_OFF=	--without-postgresql
+POSTGRES_USES=			pgsql
+
+OPTIONS_GROUP+=			MAIL
+OPTIONS_GROUP_MAIL=		DOT \
+						FILE \
+						FLOCK \
+						HESIOD \
+						KERBEROS \
+						LOCKF \
+						LOCKING \
+						MMDF \
+						POP
+MAIL_DESC=				Mail
+DOT_DESC=				Uses dot-locking to interlock access to mailer inbox
+FILE_DESC=				Locking mail spool files preconfigured
+FLOCK_DESC=				Flock mail spool file locking method
+HESIOD_DESC=			Support Hesiod to get the POP server host
+KERBEROS_DESC=			Support Kerberos-authenticated POP
+LOCKF_DESC=				Support for lockf mail lockin
+LOCKING_DESC=			Support for locking mail spool files
+MMDF_DESC=				Support for mmdf mailbox locking
+POP_DESC=				Support POP for mail retrieval
+KERBEROS_IMPLIES=		POP
+HESIOD_IMPLIES=			POP
+DOT_PREVENTS=			FILE FLOCK LOCKF LOCKING MMDF
+FILE_PREVENTS=			DOT FLOCK LOCKF LOCKING MMDF
+FLOCK_PREVENTS=			DOT FILE LOCKF LOCKING MMDF
+LOCKF_PREVENTS=			DOT FILE FLOCK LOCKING MMDF
+LOCKING_PREVENTS=		DOT FILE FLOCK LOCKF MMDF
+MMDF_PREVENTS=			DOT FILE FLOCK LOCKF LOCKING
+DOT_PREVENTS_MSG=		dot incompatible with file, flock, lockf, locking and mmdf
+FILE_PREVENTS_MSG=		file incompatible with dot, flock, lockf, locking and mmdf
+FLOCK_PREVENTS_MSG=		flock incompatible with dot, file, lockf, locking and mmdf
+LOCKF_PREVENTS_MSG=		lockf incompatible with dot, file, flock, locking and mmdf
+LOCKING_PREVENTS_MSG=	locking incompatible with dot, file, flock, lockf and mmdf
+MMDF_PREVENTS_MSG=		mmdf incompatible with dot, file, flock, lockf and locking
+DOT_CONFIGURE_ON=		--with-mail-locking=dot
+FILE_CONFIGURE_ON=		--with-mail-locking=file
+FLOCK_CONFIGURE_ON=		--with-mail-locking=flock
+LOCKF_CONFIGURE_ON=		--with-mail-locking=lockf
+LOCKING_CONFIGURE_ON=	--with-mail-locking=locking
+MMDF_CONFIGURE_ON=		--with-mail-locking=mmdf
+HESIOD_CONFIGURE_ON=	--with-hesiod
+KERBEROS_CONFIGURE_ON=	--with-kerberos
+POP_CONFIGURE_ON=		--with-pop
+
+OPTIONS_GROUP+=			NETWORKINGS
+OPTIONS_GROUP_NETWORKINGS=	DNET \
+						IPV6_CNAME \
+						SOCKS \
+						TOOLTALK
+NETWORKINGS_DESC=		Networking
+DNET_DESC=				Support DECnet
+IPV6_CNAME_DESC=		IPv6-ly correct host name canonicalization
+SOCKS_DESC=				Support SOCKS (an Internet proxy)
+TOOLTALK_DESC=			Support the ToolTalk IPC protocol
+DNET_CONFIGURE_ON=			--with-dnet
+DNET_CONFIGURE_OFF=			--with-dnet=no
+IPV6_CNAME_CONFIGURE_ON=	--with-ipv6-cname
+IPV6_CNAME_CONFIGURE_OFF=	--disable-ipv6-cname
+SOCKS_CONFIGURE_ON=			--with-socks
+TOOLTALK_CONFIGURE_ON=		--with-tooltalk
+
+OPTIONS_GROUP+=			MEMORY_ALLOCATION
+OPTIONS_GROUP_MEMORY_ALLOCATION=	DEBUG_MALLOC \
+						DLMALLOC \
+						DUMP_IN_EXEC \
+						KKCC \
+						NEWGC \
+						PDUMP \
+						REL_ALLOC \
+						SYSTEM_MALLOC \
+						VDB_AUTO \
+						VDB_FAKE \
+						VDB_MACH \
+						VDB_POSIX \
+						VDB_WIN32
+MEMORY_ALLOCATION_DESC=	Memory allocation
+DEBUG_MALLOC_DESC=		Use a debugging malloc
+DLMALLOC_DESC=			Use Doug Lea\'s malloc implementation
+DUMP_IN_EXEC_DESC=		Enable dumping into executable
+KKCC_DESC=				Enable experimental new GC mark algorithms
+NEWGC_DESC=				Enable new incremental garbage collector and new allocator
+PDUMP_DESC=				Enable portable LISP preloader
+REL_ALLOC_DESC=			Enable the relocating allocator
+SYSTEM_MALLOC_DESC=		Use the system malloc
+VDB_AUTO_DESC=			Auto-detection of Virtual-Dirty-Bit write-barrier implementation
+VDB_FAKE_DESC=			Fake-detection of Virtual-Dirty-Bit write-barrier implementation
+VDB_MACH_DESC=			Mach-detection of Virtual-Dirty-Bit write-barrier implementation
+VDB_POSIX_DESC=			POSIX-detection of Virtual-Dirty-Bit write-barrier implementation
+VDB_WIN32_DESC=			Win32-detection of Virtual-Dirty-Bit write-barrier implementation
+VDB_AUTO_PREVENTS=		VDB_FAKE VDB_MACH VDB_POSIX VDB_WIN32
+VDB_FAKE_PREVENTS=		VDB_AUTO VDB_MACH VDB_POSIX VDB_WIN32
+VDB_MACH_PREVENTS=		VDB_AUTO VDB_FAKE VDB_POSIX VDB_WIN32
+VDB_POSIX_PREVENTS=		VDB_AUTO VDB_FAKE VDB_MACH VDB_WIN32
+VDB_WIN32_PREVENTS=		VDB_AUTO VDB_FAKE VDB_MACH VDB_POSIX
+VDB_AUTO_PREVENTS_MSG=	auto incompatible with fake, mach, posix and win32
+VDB_FAKE_PREVENTS_MSG=	fake incompatible with auto, mach, posix and win32
+VDB_MACH_PREVENTS_MSG=	mach incompatible with auto, fake, posix and win32
+VDB_POSIX_PREVENTS_MSG=	posix incompatible with auto, fake, mach, and win32
+VDB_WIN32_PREVENTS_MSG=	win32 incompatible with auto, fake, mach and posix
+DEBUG_MALLOC_CONFIGURE_ON=	--with-debug-malloc
+DLMALLOC_CONFIGURE_ON=		--with-dlmalloc
+DUMP_IN_EXEC_CONFIGURE_ON=	--with-dump-in-exec
+DUMP_IN_EXEC_CONFIGURE_OFF=	--disable-dump-in-exec
+KKCC_CONFIGURE_ON=			--with-kkcc
+KKCC_CONFIGURE_OFF=			--disable-kkcc
+NEWGC_CONFIGURE_ON=			--with-newgc
+NEWGC_CONFIGURE_OFF=		--disable-newgc
+PDUMP_CONFIGURE_ON=			--with-pdump
+REL_ALLOC_CONFIGURE_ON=		--with-rel-alloc
+SYSTEM_MALLOC_CONFIGURE_ON=	--with-system-malloc
+VDB_AUTO_CONFIGURE_ON=		--with-vdb=auto
+VDB_FAKE_CONFIGURE_ON=		--with-vdb=fake
+VDB_MACH_CONFIGURE_ON=		--with-vdb=mach
+VDB_POSIX_CONFIGURE_ON=		--with-vdb=posix
+VDB_WIN32_CONFIGURE_ON=		--with-vdb=win32
+
+OPTIONS_GROUP+=			EMACS_LISP
+OPTIONS_GROUP_EMACS_LISP=	MODULES \
+						BIGNUM_GMP \
+						BIGNUM_MPIR \
+						BIGNUM_MP \
+						BIGNUM_NO
+EMACS_LISP_DESC=		Emacs Lisp
+MODULES_DESC=			Dynamic Shared Objects
+BIGNUM_GMP_DESC=		Bignums, ratios, or bigfloats using GNU MP
+BIGNUM_MPIR_DESC=		Bignums, ratios, or bigfloats using MPIR
+BIGNUM_MP_DESC=			Bignums, ratios, or bigfloats using BSD MP
+BIGNUM_NO_DESC=			Disables Bignums, ratios, or bigfloats 
+BIGNUM_GMP_PREVENTS=	BIGNUM_MPIR BIGNUM_MP BIGNUM_NO
+BIGNUM_MPIR_PREVENTS=	BIGNUM_GMP BIGNUM_MP BIGNUM_NO
+BIGNUM_MP_PREVENTS=		BIGNUM_GMP BIGNUM_MPIR BIGNUM_NO
+BIGNUM_NO_PREVENTS=		BIGNUM_GMP BIGNUM_MPIR BIGNUM_MP
+BIGNUM_GMP_PREVENTS_MSG=	gmp incompatible with mpir, mp and no
+BIGNUM_MPIR_PREVENTS_MSG=	mpir incompatible with gmp, mp and no
+BIGNUM_MP_PREVENTS_MSG=		mp incompatible with gmp, mpir and no
+BIGNUM_NO_PREVENTS_MSG=		no incompatible with gmp, mpir and mp
+MODULES_CONFIGURE_ON=		--with-modules
+MODULES_CONFIGURE_OFF=		--disable-modules
+BIGNUM_GMP_CONFIGURE_ON=	--with-bignum=gmp
+BIGNUM_MPIR_CONFIGURE_ON=	--with-bignum=mpir
+BIGNUM_MP_CONFIGURE_ON=		--with-bignum=mp
+BIGNUM_NO_CONFIGURE_ON=		--with-bignum=no
+
+OPTIONS_GROUP+=			PLATFORM
+OPTIONS_GROUP_PLATFORM=	WORKSHOP \
+						SPARCWORKS
+PLATFORM_DESC=			Platform Specific
+WORKSHOP_DESC=			Support the Sun WorkShop development environment
+SPARCWORKS_DESC=		Alias for --with-workshop
+WORKSHOP_CONFIGURE_ON=	--with-workshop
+SPARCWORKS_CONFIGURE_ON=--with-sparcworks
+
+.if defined(L10N)
+OPTIONS_GROUP+=			L10N
+OPTIONS_GROUP_L10N=		JA_JP_EUCJP \
+						JA_JP_UTF_8 \
+						MISC
+L10N_DESC=				Localization
+JA_JP_EUCJP_DESC=		Japanese EUC-JP specification
+JA_JP_UTF_8_DESC=		Japanese UTF-8 specification
+JA_JP_EUCJP_PREVENTS=	JA_JP_UTF_8
+JA_JP_UTF_8_PREVENTS=	JA_JP_EUCJP
+JA_JP_EUCJP_PREVENTS_MSG=	ja_JP.eucJP incompatible with ja_JP.UTF-8
+JA_JP_UTF_8_PREVENTS_MSG=	ja_JP.UTF-8 incompatible with ja_JP.eucJP
+JA_JP_EUCJP_VARS=		LOCALE=ja_JP.eucJP
+JA_JP_UTF_8_VARS=		LOCALE=ja_JP.UTF-8
+MISC_RUN_DEPENDS=		xepkg-misc-devel>=1.0:${PORTSDIR}/editors/xepkg-misc
+.endif
+
+OPTIONS_SUB=			yes
+
+# When package building
+.if defined(PACKAGE_BUILDING)
+OPTIONS_DEFAULT:=		${OPTIONS_DEFAULT:NOFFIX}
+.endif

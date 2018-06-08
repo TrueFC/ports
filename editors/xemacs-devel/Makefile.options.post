@@ -1,0 +1,36 @@
+#-*- mode: Makefile; tab-width: 4; -*-
+
+# Window System options
+.if ${PORT_OPTIONS:MXFT_*}
+USE_XORG+=			xft xrender
+CFLAGS+=			-I${LOCALBASE}/include/freetype2
+BUILD_DEPENDS+=		freetype2>=2.6.3:${PORTSDIR}/print/freetype2
+.endif
+
+# Sound options
+.if !empty(${SOUND_CONFIGURE_VALUE:Mnative}) && !empty(${SOUND_CONFIGURE_VALUE:Mnas})
+CONFIGURE_ARGS+=	--native-sound-lib=-laudio
+LIB_DEPENDS+=		libaudio.so:${PORTSDIR}/audio/nas
+.endif
+
+# GUI options
+.if ${PORT_OPTIONS:M*_MOTIF}
+USES+=				motif
+.endif
+
+# Gnome and GTK options
+.if ${PORT_OPTIONS:MGNOME} && ${PORT_OPTIONS:MGTK}
+USE_GNOME=			gtk12
+.endif
+
+# I18N options
+.if ${PORT_OPTIONS:MJA_JP_*}
+PLIST_FILES+=		share/xemacs/mule-packages/etc/app-defaults/${LOCALE}
+.endif
+
+# L10N options
+.if defined(L10N) && !empty(L10N)
+PLIST_SUB+=			LOCALE=${LOCALE}  LOCAL=""
+.else
+PLIST_SUB+=			LOCAL="@comment "
+.endif
