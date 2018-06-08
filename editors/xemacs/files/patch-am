@@ -1,0 +1,11 @@
+--- man/Makefile.org	2016-05-19 10:22:19.651698000 +0900
++++ man/Makefile	2016-05-19 10:23:14.235557000 +0900
+@@ -20,7 +20,7 @@
+ # Boston, MA 02111-1307, USA.
+ 
+ SHELL    = /bin/sh
+-MAKEINFO = makeinfo
++MAKEINFO = makeinfo --force --no-validate
+ TEXI2DVI = texi2dvi
+ RM = rm -f
+ 

@@ -1,0 +1,37 @@
+--- Makefile.in.in.org	2016-04-14 11:40:19.961719000 +0900
++++ Makefile.in.in	2016-04-14 11:43:24.801062000 +0900
+@@ -97,7 +97,7 @@
+ ## subdirectories of this directory.  The default values for many of
+ ## the variables below are expressed in terms of this one, so you may
+ ## not need to change them.  This defaults to /usr/local.
+-prefix=@prefix@
++prefix=${DESTDIR}@prefix@
+ 
+ ## Variable data (as per each program update) goes here
+ ## The default is ${PROGNAME}
+@@ -132,14 +132,14 @@
+ libdir=@libdir@
+ 
+ ## Where to install XEmacs's man pages, and what extension they should have.
+-mandir=@mandir@
++mandir=${DESTDIR}@mandir@/man1
+ manext=.1
+ 
+ ## Where to install and expect the info files describing XEmacs.  In the
+ ## past, this defaulted to a subdirectory of ${prefix}/lib/xemacs, but
+ ## since there are now many packages documented with the texinfo
+ ## system, it is inappropriate to imply that it is part of XEmacs.
+-infodir=@infodir@
++infodir=${DESTDIR}@infodir@
+ 
+ ## Document me.
+ ## See callproc.c for code which references this.
+@@ -429,7 +429,7 @@
+ 	     do (cd $${subdir} && $(RM) -r RCS CVS SCCS \#* *~) ; done ; \
+ 	else true; fi
+ #ifdef PDUMP
+-	${INSTALL_DATA} src/${PROGNAME}.dmp ${bindir}/${PROGNAME}-${version}-`src/${PROGNAME} -sd`.dmp
++	${INSTALL_DATA} src/${PROGNAME}.dmp ${bindir}/${PROGNAME}-${version}.dmp
+ #endif
+ #ifdef WIN32_NATIVE
+ 	${INSTALL_PROGRAM} src/${PROGNAME} ${bindir}/${PROGNAME}

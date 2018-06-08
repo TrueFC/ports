@@ -1,0 +1,28 @@
+#-*- mode: Makefile; tab-width: 4; -*-
+
+# Sound options
+.if !empty(${SOUND_CONFIGURE_VALUE:Mnative}) && !empty(${SOUND_CONFIGURE_VALUE:Mnas})
+CONFIGURE_ARGS+=	--native-sound-lib=-laudio
+LIB_DEPENDS+=		libaudio.so:${PORTSDIR}/audio/nas
+.endif
+
+# GUI options
+.if ${PORT_OPTIONS:M*_MOTIF}
+USES+=				motif
+.endif
+
+# Gnome and GTK options
+.if ${PORT_OPTIONS:MGNOME} && ${PORT_OPTIONS:MGTK}
+USE_GNOME=			gtk12
+.endif
+
+# L10N options
+.if defined(L10N) && !empty(L10N)
+.	if ${L10N} == ja
+PLIST_FILES+=		man/ja/man1/xemacs.1.gz
+.	endif
+PLIST_FILES+=		${XEMACS_PACKAGESDIR}/etc/app-defaults/${LOCALE}
+PLIST_SUB+=			LOCALE=${LOCALE} LOCAL=""
+.else
+PLIST_SUB+=			LOCAL="@comment "
+.endif

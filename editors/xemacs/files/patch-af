@@ -1,0 +1,19 @@
+--- configure.in.org	2016-04-14 11:50:05.558411000 +0900
++++ configure.in	2016-04-14 15:36:51.095101000 +0900
+@@ -1106,6 +1106,7 @@
+ dnl Straightforward OS determination
+ case "$canonical" in
+   *-*-linux*    ) opsys=linux ;;
++  *-*-freebsd*  ) opsys=freebsd ;;
+   *-*-netbsd*   ) opsys=netbsd ;;
+   *-*-openbsd*	) opsys=openbsd ;;
+   *-*-nextstep* ) opsys=nextstep ;;
+@@ -4596,7 +4597,7 @@
+ dnl Check for Berkeley DB.
+ if test "$with_database_berkdb" != "no"; then
+   AC_MSG_CHECKING(for Berkeley db.h)
+-  for header in "db/db.h" "db.h"; do
++  for header in "/usr/include/db.h" "db/db.h" "db.h"; do
+     case "$opsys" in
+         *freebsd*)
+     AC_TRY_COMPILE([

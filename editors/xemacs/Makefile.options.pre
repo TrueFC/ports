@@ -1,0 +1,438 @@
+#-*- mode: Makefile; tab-width: 4; -*-
+
+OPTIONS_DEFINE=			DESKTOP
+OPTIONS_DEFINE_amd64=	SYSTEM_MALLOC
+
+OPTIONS_DEFAULT=		ATHENA_XAW \
+						BERKDB \
+						CLASH_DETECTION \
+						DIALOGS_MOTIF \
+						GIF \
+						JPEG \
+						LDAP \
+						MENUBARS_LUCID \
+						MULE \
+						NATIVE \
+						PNG \
+						POP \
+						SCROLLBARS_MOTIF \
+						TIFF \
+						TOOLBARS \
+						TTY \
+						WIDGETS_MOTIF \
+						WMCOMMAND \
+						X11 \
+						XEPKG_LATIN1 \
+						XFACE \
+						XIM_XLIB \
+						XPM
+OPTIONS_DEFAULT_amd64=	SYSTEM_MALLOC \
+						PDUMP
+
+DESKTOP_DESC=			Use Gnome desktop environments
+SYSTEM_MALLOC_DESC=		Use the system malloc, instead of GNU malloc
+DESKTOP_IMPLIES=		X11 GNOME
+SYSTEM_MALLOC_CONFIGURE_ON=	--with-system-malloc
+
+OPTIONS_GROUP=			WINDOW_SYSTEM
+OPTIONS_GROUP_WINDOW_SYSTEM= GNOME \
+						GTK \
+						WMCOMMAND \
+						X11 \
+						XMU
+WINDOW_SYSTEM_DESC=		Window System
+GNOME_DESC=				Use GNOME on the X Window System
+GTK_DESC=				Use GTK on the X Window System
+WMCOMMAND_DESC=			With realized leader window which will not keep the WM_COMMAND property
+X11_DESC=				Support the X Window System
+XMU_DESC=				For systems whose vendors ship Xmu
+GNOME_IMPLIES=			X11
+GTK_IMPLIES=			X11
+X11_PREVENTS_MSG=		X Window System imcompatible with MS Windows
+GNOME_CONFIGURE_ON=		--with-gnome
+GTK_CONFIGURE_ON=		--with-gtk
+WMCOMMAND_CONFIGURE_ON=	--with-wmcommand=yes
+WMCOMMAND_CONFIGURE_OFF=--with-wmcommand=no
+X11_CFLAGS+=			-I${LOCALBASE}/include/libpng16
+X11_CONFIGURE_ON=		--with-x11
+X11_CONFIGURE_OFF=		--with-x11=no
+X11_USE=				XORG=xpm,xbitmaps,xaw
+XMU_CONFIGURE_ON=		--with-xmu=yes
+
+OPTIONS_GROUP+=			GUI
+OPTIONS_GROUP_GUI=		ATHENA_3D \
+						ATHENA_95 \
+						ATHENA_NEXT \
+						ATHENA_XAW \
+						ATHENA_XPM \
+						CDE \
+						DIALOGS_ATHENA \
+						DIALOGS_LUCID \
+						DIALOGS_MOTIF \
+						DIALOGS_NO \
+						DRAGNDROP \
+						MENUBARS_LUCID \
+						MENUBARS_MOTIF \
+						MENUBARS_NO \
+						OFFIX \
+						SCROLLBARS_ATHENA \
+						SCROLLBARS_LUCID \
+						SCROLLBARS_MOTIF \
+						SCROLLBARS_NO \
+						TOOLBARS \
+						WIDGETS_ATHENA \
+						WIDGETS_LUCID \
+						WIDGETS_MOTIF \
+						WIDGETS_NO
+GUI_DESC=				GUI component
+ATHENA_3D_DESC=			Link with the 3d Athena library
+ATHENA_95_DESC=			Link with the 95 Athena library
+ATHENA_NEXT_DESC=		Link with the next Athena library
+ATHENA_XAW_DESC=		Link with the xaw Athena library
+ATHENA_XPM_DESC=		Link with the xpm Athena library
+CDE_DESC=				Support CDE drag and drop API
+DIALOGS_ATHENA_DESC=	Dialogs type athena
+DIALOGS_LUCID_DESC=		Dialogs type lucid
+DIALOGS_MOTIF_DESC=		Dialogs type motif
+DIALOGS_NO_DESC=		No Dialogs
+DRAGNDROP_DESC=			Support generic drag and drop API
+MENUBARS_LUCID_DESC=	Menubars type lucid
+MENUBARS_MOTIF_DESC=	Menubars type motif
+MENUBARS_NO_DESC=		Menubars type no
+OFFIX_DESC=				Support OffiX drag and drop API
+SCROLLBARS_ATHENA_DESC=	Scrollbars type athena
+SCROLLBARS_LUCID_DESC=	Scrollbars type lucid
+SCROLLBARS_MOTIF_DESC=	Scrollbars type motif
+SCROLLBARS_NO_DESC=		Scrollbars type no
+TOOLBARS_DESC=			Toolbar support
+WIDGETS_ATHENA_DESC=	Widgets type athena
+WIDGETS_LUCID_DESC=		Widgets type lucid
+WIDGETS_MOTIF_DESC=		Widgets type motif
+WIDGETS_NO_DESC=		Widgets type no
+CDE_IMPLIES=			DRAGNDROP
+DIALOGS_ATHENA_IMPLIES=	WIDGETS_ATHENA
+DIALOGS_LUCID_IMPLIES=	WIDGETS_LUCID
+DIALOGS_MOTIF_IMPLIES=	WIDGETS_MOTIF
+MENUBARS_LUCID_IMPLIES=	XFS
+OFFIX_IMPLIES=			DRAGNDROP
+TOOLBARS_IMPLIES=		XPM
+ATHENA_3D_PREVENTS=		ATHENA_95 ATHENA_NEXT ATHENA_XAW ATHENA_XPM
+ATHENA_95_PREVENTS=		ATHENA_3D ATHENA_NEXT ATHENA_XAW ATHENA_XPM
+ATHENA_NEXT_PREVENTS=	ATHENA_95 ATHENA_3D ATHENA_XAW ATHENA_XPM
+ATHENA_XAW_PREVENTS=	ATHENA_95 ATHENA_NEXT ATHENA_3D ATHENA_XPM
+ATHENA_XPM_PREVENTS=	ATHENA_95 ATHENA_NEXT ATHENA_XAW ATHENA_3D
+DIALOGS_ATHENA_PREVENTS=DIALOGS_LUCID DIALOGS_MOTIF DIALOGS_NO
+DIALOGS_LUCID_PREVENTS=	DIALOGS_ATHENA DIALOGS_MOTIF DIALOGS_NO
+DIALOGS_MOTIF_PREVENTS=	DIALOGS_LUCID DIALOGS_ATHENA DIALOGS_NO
+DIALOGS_NO_PREVENTS=	DIALOGS_LUCID DIALOGS_ATHENA DIALOGS_MOTIF
+MENUBARS_LUCID_PREVENTS=MENUBARS_MOTIF MENUBARS_NO
+MENUBARS_MOTIF_PREVENTS=MENUBARS_LUCID MENUBARS_NO
+MENUBARS_NO_PREVENTS=	MENUBARS_MOTIF MENUBARS_LUCID
+SCROLLBARS_ATHENA_PREVENTS=	SCROLLBARS_LUCID SCROLLBARS_MOTIF SCROLLBARS_NO
+SCROLLBARS_LUCID_PREVENTS=	SCROLLBARS_ATHENA SCROLLBARS_MOTIF SCROLLBARS_NO
+SCROLLBARS_MOTIF_PREVENTS=	SCROLLBARS_LUCID SCROLLBARS_ATHENA SCROLLBARS_NO
+SCROLLBARS_NO_PREVENTS=		SCROLLBARS_LUCID SCROLLBARS_MOTIF SCROLLBARS_ATHENA
+WIDGETS_ATHENA_PREVENTS=WIDGETS_LUCID WIDGETS_MOTIF WIDGETS_NO
+WIDGETS_LUCID_PREVENTS=	WIDGETS_ATHENA WIDGETS_MOTIF WIDGETS_NO
+WIDGETS_MOTIF_PREVENTS=	WIDGETS_LUCID WIDGETS_ATHENA WIDGETS_NO
+WIDGETS_NO_PREVENTS=	WIDGETS_LUCID WIDGETS_MOTIF WIDGETS_ATHENA
+ATHENA_3D_PREVENTS_MSG=		3d Athena library imcompatible with other libraries
+ATHENA_95_PREVENTS_MSG=		95 Athena library imcompatible with other libraries
+ATHENA_NEXT_PREVENTS_MSG=	next Athena library imcompatible with other libraries
+ATHENA_XAW_PREVENTS_MSG=	xaw Athena library imcompatible with other libraries
+ATHENA_XPM_PREVENTS_MSG=	xpm Athena library imcompatible with other libraries
+DIALOGS_ATHENA_PREVENTS_MSG=athena type dialogs imcompatible with lucid, motif and no
+DIALOGS_LUCID_PREVENTS_MSG=	lucid type dialogs imcompatible with athena, motif and no
+DIALOGS_MOTIF_PREVENTS_MSG=	motif type dialogs imcompatible with athena, lucid and no
+DIALOGS_NO_PREVENTS_MSG=	no type dialogs imcompatible with athena motifand lucid
+MENUBARS_LUCID_PREVENTS_MSG=lucid type menubars imcompatible with motif and no
+MENUBARS_MOTIF_PREVENTS_MSG=motif type menubars imcompatible with lucid and no
+MENUBARS_NO_PREVENTS_MSG=	no type menubars imcompatible with motif and lucid
+SCROLLBARS_ATHENA_PREVENTS_MSG=	athena type scrollbars imcompatible with motif, lucid and no
+SCROLLBARS_LUCID_PREVENTS_MSG=	lucid type scrollbars imcompatible with motif, athena and no
+SCROLLBARS_MOTIF_PREVENTS_MSG=	motif type scrollbars imcompatible with lucid, athena and no
+SCROLLBARS_NO_PREVENTS_MSG=		no type scrollbars imcompatible with motif, athena and lucid
+WIDGETS_ATHENA_PREVENTS_MSG=athena type widgets imcompatible with motif, lucid and no
+WIDGETS_LUCID_PREVENTS_MSG=	lucid type widgets imcompatible with motif, athena and no
+WIDGETS_MOTIF_PREVENTS_MSG=	motif type widgets imcompatible with lucid, athena and no
+WIDGETS_NO_PREVENTS_MSG=	no type widgets imcompatible with motif, athena and lucid
+ATHENA_3D_CONFIGURE_ON=			--with-athena=3d
+ATHENA_95_CONFIGURE_ON=			--with-athena=95
+ATHENA_NEXT_CONFIGURE_ON=		--with-athena=next
+ATHENA_XAW_CONFIGURE_ON=		--with-athena=xaw
+ATHENA_XPM_CONFIGURE_ON=		--with-athena=xpm
+CDE_CONFIGURE_ON=				--with-cde
+DIALOGS_ATHENA_CONFIGURE_ON=	--with-dialogs=athena
+DIALOGS_LUCID_CONFIGURE_ON=		--with-dialogs=lucid
+DIALOGS_MOTIF_CONFIGURE_ON=		--with-dialogs=motif
+DIALOGS_NO_CONFIGURE_ON=		--with-dialogs=no
+DRAGNDROP_CONFIGURE_ON=			--with-dragndrop
+MENUBARS_LUCID_CONFIGURE_ON=	--with-menubars=lucid
+MENUBARS_MOTIF_CONFIGURE_ON=	--with-menubars=motif
+MENUBARS_NO_CONFIGURE_ON=		--with-menubars=no
+OFFIX_CONFIGURE_ON=				--with-offix
+SCROLLBARS_ATHENA_CONFIGURE_ON=	--with-scrollbars=athena
+SCROLLBARS_LUCID_CONFIGURE_ON=	--with-scrollbars=lucid
+SCROLLBARS_MOTIF_CONFIGURE_ON=	--with-scrollbars=motif
+SCROLLBARS_NO_CONFIGURE_ON=		--with-scrollbars=no
+TOOLBARS_CONFIGURE_ON=			--with-toolbars
+WIDGETS_ATHENA_CONFIGURE_ON=	--with-widgets=athena
+WIDGETS_LUCID_CONFIGURE_ON=		--with-widgets=lucid
+WIDGETS_MOTIF_CONFIGURE_ON=		--with-widgets=motif
+WIDGETS_NO_CONFIGURE_ON=		--with-widgets=no
+ATHENA_3D_LIB_DEPENDS=			libXaw3d.so:${PORTSDIR}/x11-toolkits/Xaw3d
+OFFIX_LIB_DEPENDS=				libDnd.so:${PORTSDIR}/x11/libdnd
+
+OPTIONS_GROUP+=			TTYS
+OPTIONS_GROUP_TTYS=		TTY \
+						NCURSES \
+						GPM
+TTYS_DESC=				TTY redisplay
+TTY_DESC=				Support ttys
+NCURSES_DESC=			Use the ncurses library for tty support
+GPM_DESC=				Support the GPM mouse library for ttys
+NCURSES_IMPLIES=		TTY
+GPM_IMPLIES=			TTY
+TTY_CONFIGURE_ON=		--with-tty=yes
+TTY_CONFIGURE_OFF=		--with-tty=no
+
+OPTIONS_GROUP+=			IMAGE
+OPTIONS_GROUP_IMAGE=	GIF \
+						JPEG \
+						PNG \
+						TIFF \
+						XFACE \
+						XPM
+IMAGE_DESC=				Images
+GIF_DESC=				Support GIF images
+JPEG_DESC=				Support JPEG images
+PNG_DESC=				Support PNG images
+XPM_DESC=				Support XPM images
+XFACE_DESC=				Support X-Face mail headers
+TIFF_DESC=				Support TIFF images
+GIF_CONFIGURE_ON=		--with-gif
+JPEG_CONFIGURE_ON=		--with-jpeg
+PNG_CONFIGURE_ON=		--with-png
+TIFF_CONFIGURE_ON=		--with-tiff
+XFACE_CONFIGURE_ON=		--with-xface
+XPM_CONFIGURE_ON=		--with-xpm
+GIF_CONFIGURE_OFF=		--with-gif=no
+JPEG_CONFIGURE_OFF=		--with-jpeg=no
+PNG_CONFIGURE_OFF=		--with-png=no
+TIFF_CONFIGURE_OFF=		--with-tiff=no
+XFACE_CONFIGURE_OFF=	--with-xface=no
+XPM_CONFIGURE_OFF=		--with-xpm=no
+GIF_LIB_DEPENDS=		libgif.so:${PORTSDIR}/graphics/giflib
+JPEG_LIB_DEPENDS=		libjpeg.so:${PORTSDIR}/graphics/jpeg-turbo
+PNG_LIB_DEPENDS=		libpng.so:${PORTSDIR}/graphics/png
+TIFF_LIB_DEPENDS=		libtiff.so:${PORTSDIR}/graphics/tiff
+XFACE_LIB_DEPENDS=		libcompface.so:${PORTSDIR}/mail/faces
+XPM_USE=				XORG+=xpm
+
+OPTIONS_GROUP+=			SOUND
+OPTIONS_GROUP_SOUND=	ESD \
+						NAS \
+						NATIVE
+SOUND_DESC=				Sound
+ESD_DESC=				Support for ESD (Enlightened Sound Daemon)
+NAS_DESC=				Support for NAS (network audio system)
+NATIVE_DESC=			Support for sound (native)
+ESD_VARS=				SOUND_CONFIGURE_VALUE+=esd
+NAS_VARS=				SOUND_CONFIGURE_VALUE+=nas
+NATIVE_VARS=			SOUND_CONFIGURE_VALUE+=native
+ESD_VARS_OFF=			SOUND_CONFIGURE_VALUE+=noesd
+NAS_VARS_OFF=			SOUND_CONFIGURE_VALUE+=nonas
+NATIVE_VARS_OFF=		SOUND_CONFIGURE_VALUE+=nonative
+CONFIGURE_ARGS+=		--with-sound=${SOUND_CONFIGURE_VALUE:ts,}
+
+OPTIONS_GROUP+=			DATABASE
+OPTIONS_GROUP_DATABASE=	BERKDB \
+						DBM \
+						GNUDBM \
+						LDAP \
+						POSTGRESQL
+DATABASE_DESC=			Databases
+BERKDB_DESC=			Support for Berkeley database
+DBM_DESC=				Support for DBM
+GNUDBM_DESC=			Support for GNU DBM
+LDAP_DESC=				Support the LDAP protocol
+POSTGRESQL_DESC=		Support the PostgreSQL RDBMS
+BERKDB_PREVENTS=		DBM GNUDBM
+DBM_PREVENTS=			BERKDB GNUDBM
+GNUDBM_PREVENTS=		BERKDB DBM
+BERKDB_PREVENTS_MSG=	berkdb incompatible with dbm and gnudbm
+DBM_PREVENTS_MSG=		dbm incompatible with and berkdb gnudbm
+GNUDBM_PREVENTS_MSG=	gnudbm incompatible with dbm and berkdb
+BERKDB_CONFIGURE_ON=	--with-database=berkdb
+DBM_CONFIGURE_ON=		--with-database=dbm
+GNUDBM_CONFIGURE_ON=	--with-database=gnudbm
+LDAP_CONFIGURE_ON=		--with-ldap
+LDAP_CONFIGURE_OFF=		--with-ldap=no
+POSTGRESQL_CONFIGURE_ON=--with-postgresql
+LDAP_USE=				OPENLDAP=yes
+POSTGRES_CONFIGURE_OFF=	--without-postgresql
+POSTGRES_USES=			pgsql
+
+OPTIONS_GROUP+=			MAIL
+OPTIONS_GROUP_MAIL=		DOT \
+						FLOCK \
+						HESIOD \
+						KERBEROS \
+						LOCKF \
+						LOCKING \
+						MMDF \
+						POP
+MAIL_DESC=				Mail
+DOT_DESC=				Uses dot-locking to interlock access to mailer inbox
+FLOCK_DESC=				Support for flock mail spool file locking method
+HESIOD_DESC=			Support Hesiod to get the POP server host
+KERBEROS_DESC=			Support Kerberos-authenticated POP
+LOCKF_DESC=				Support for lockf mail lockin
+LOCKING_DESC=			Support for locking mail spool files
+MMDF_DESC=				Support for mmdf mailbox locking
+POP_DESC=				Support POP for mail retrieval
+KERBEROS_IMPLIES=		POP
+HESIOD_IMPLIES=			POP
+DOT_PREVENTS=			FLOCK LOCKF LOCKING MMDF
+FLOCK_PREVENTS=			DOT LOCKF LOCKING MMDF
+LOCKF_PREVENTS=			DOT FLOCK LOCKING MMDF
+LOCKING_PREVENTS=		DOT FLOCK LOCKF MMDF
+MMDF_PREVENTS=			DOT FLOCK LOCKF LOCKING
+DOT_PREVENTS_MSG=		dot incompatible with flock, lockf, locking and mmdf
+FLOCK_PREVENTS_MSG=		flock incompatible with dot, lockf, locking and mmdf
+LOCKF_PREVENTS_MSG=		lockf incompatible with dot, flock, locking and mmdf
+LOCKING_PREVENTS_MSG=	locking incompatible with dot, flock, lockf and mmdf
+MMDF_PREVENTS_MSG=		mmdf incompatible with dot, flock, lockf and locking
+DOT_CONFIGURE_ON=		--mail-locking=dot
+FLOCK_CONFIGURE_ON=		--mail-locking=flock
+HESIOD_CONFIGURE_ON=	--with-hesiod
+KERBEROS_CONFIGURE_ON=	--with-kerberos
+LOCKF_CONFIGURE_ON=		--mail-locking=lockf
+LOCKING_CONFIGURE_ON=	--mail-locking=locking
+MMDF_CONFIGURE_ON=		--mail-locking=mmdf
+POP_CONFIGURE_ON=		--with-pop
+
+OPTIONS_GROUP+=			I18N
+OPTIONS_GROUP_I18N=		CANNA \
+						MULE \
+						WNN \
+						WNN6 \
+						XFS \
+						XIM_MOTIF \
+						XIM_NO \
+						XIM_XLIB
+I18N_DESC=				Internationalization
+CANNA_DESC=				Support the Canna input method
+MULE_DESC=				Support non-Latin-1 (including Asian) languages
+WNN_DESC=				Support the Wnn input methods
+WNN6_DESC=				Support the commercial version of Wnn
+XFS_DESC=				Support internationalized menubar via XFontSets
+XIM_MOTIF_DESC=			Support X Input Method protocol with motif
+XIM_NO_DESC=			Nothing support X Input Method
+XIM_XLIB_DESC=			Support X Input Method protocol with xlib
+CANNA_IMPLIES=			MULE
+WNN_IMPLIES=			MULE
+XIM_MOTIF_IMPLIES=		MULE
+XIM_XLIB_IMPLIES=		MULE
+XFS_PREVENTS=			XIM_MOTIF
+XIM_MOTIF_PREVENTS=		XIM_XLIB
+XIM_XLIB_PREVENTS=		XIM_MOTIF
+XFS_PREVENTS=			XIM_MOTIF
+XIM_MOTIF_PREVENTS_MSG=	XIM motif incompatible with XIM xlib
+XIM_XLIB_PREVENTS_MSG=	XIM xlib incompatible with XIM motif
+XFS_PREVENTS_MSG=		XFontSets incompatible with XIM motif
+MULE_USES=				gettext
+CANNA_CONFIGURE_ON=		--with-canna
+MULE_CONFIGURE_ON=		--with-mule
+WNN_CONFIGURE_ON=		--with-wnn
+WNN6_CONFIGURE_ON=		--with-wnn6
+XFS_CONFIGURE_ON=		--with-xfs
+CANNA_CONFIGURE_OFF=	--with-canna=no
+WNN_CONFIGURE_OFF=		--with-wnn=no
+WNN6_CONFIGURE_OFF=		--with-wnn6=no
+XIM_MOTIF_CONFIGURE_ON=	--with-xim=motif
+XIM_NO_CONFIGURE_ON=	--with-xim=no
+XIM_XLIB_CONFIGURE_ON=	--with-xim=xlib
+CANNA_LIB_DEPENDS=		libcanna.so:${PORTSDIR}/japanese/canna-lib
+WNN_LIB_DEPENDS=		libwnn.so:${PORTSDIR}/japanese/FreeWnn-lib
+WNN6_LIB_DEPENDS=		libwnn6.so:${PORTSDIR}/japanese/Wnn6-lib
+
+OPTIONS_GROUP+=			ADDS
+OPTIONS_GROUP_ADDS=		CLASH_DETECTION \
+						DNET \
+						EXTERNAL_WIDGET \
+						FILE_CODING \
+						IPV6_CNAME \
+						MODULES \
+						NETINSTALL \
+						PDUMP \
+						SOCKS \
+						TOOLTALK \
+						WORKSHOP
+ADDS_DESC=				Additional features
+CLASH_DETECTION_DESC=	Detect other instances editing the same file
+DNET_DESC=				Support DECnet
+EXTERNAL_WIDGET_DESC=	Export XEmacs as a text widget
+FILE_CODING_DESC=		Support detection and translation of newline conventions
+IPV6_CNAME_DESC=		IPv6-ly correct host name canonicalization
+MODULES_DESC=			Support for dynamically loaded libraries
+NETINSTALL_DESC=		Support installation over the internet
+PDUMP_DESC=				Somewhat experimental portable dumper
+SOCKS_DESC=				Support SOCKS (an Internet proxy)
+TOOLTALK_DESC=			Support the ToolTalk IPC protocol
+WORKSHOP_DESC=			Support the Sun WorkShop (formerly Sparcworks)
+CLASH_DETECTION_CONFIGURE_ON=	--with-clash-detection
+DNET_CONFIGURE_ON=				--with-dnet
+EXTERNAL_WIDGET_CONFIGURE_ON=	--with-external-widget
+FILE_CODING_CONFIGURE_ON=		--with-file-coding
+IPV6_CNAME_CONFIGURE_ON=		--with-ipv6-cname
+MODULES_CONFIGURE_ON=			--with-modules
+NETINSTALL_CONFIGURE_ON=		--with-netinstall
+PDUMP_CONFIGURE_ON=				--pdump
+SOCKS_CONFIGURE_ON=				--with-socks
+TOOLTALK_CONFIGURE_ON=			--with-tooltalk
+WORKSHOP_CONFIGURE_ON=			--with-workshop
+CLASH_DETECTION_CONFIGURE_OFF=	--with-clash-detection=no
+DNET_CONFIGURE_OFF=				--with-dnet=no
+
+OPTIONS_GROUP+=			XEPKGS
+OPTIONS_GROUP_XEPKGS=	XEPKG_LATIN1 \
+						XEPKG_MULE \
+						XEPKG_MISC
+XEPKGS_DESC=			XEmacs elisp packages
+XEPKG_LATIN1_DESC=		Install Basic packages(xepkg-latin1)
+XEPKG_MULE_DESC=		Install Mule packages(xepkg-mule)
+XEPKG_MISC_DESC=		Install Miscellaneous packages(xepkg-misc)
+XEPKG_LATIN1_RUN_DEPENDS=		xepkg-latin1>=1.0:${PORTSDIR}/editors/xepkg-latin1
+XEPKG_MULE_RUN_DEPENDS=	xepkg-mule>=1.0:${PORTSDIR}/editors/xepkg-mule
+XEPKG_MISC_RUN_DEPENDS=	xepkg-misc>=1.0:${PORTSDIR}/editors/xepkg-misc
+
+#.if defined(PKGNAMEPREFIX)
+#.	if ${PKGNAMEPREFIX} == ja-
+#L10N=				ja
+#.	endif
+#.endif
+.if defined(L10N)
+.	if ${L10N} == ja
+OPTIONS_DEFAULT+=	UTF8 XEPKG_MULE XEPKG_MISC
+
+OPTIONS_SINGLE=		ENCODING
+OPTIONS_SINGLE_ENCODING=UTF8 \
+					EUC_JP
+ENCODING_DESC=		Default coding system
+EUC_JP_DESC=		Japanese EUC encoding support
+EUC_JP_VARS=		ENCODING=EUC-JP LOCALE=ja_JP.eucJP
+UTF8_VARS=			ENCODING=UTF-8 LOCALE=ja_JP.UTF-8
+UTF8_BUILD_DEPENDS=	nkf:japanese/nkf
+.		if ${PORTNAME} == xemacs-canna || ${PORTNAME} == xemacs-devel-canna
+OPTIONS_DEFAULT+=	CANNA
+.		endif
+.	endif
+.endif
+
+OPTIONS_SUB=			yes
+
+# When package building
+.if defined(PACKAGE_BUILDING)
+OPTIONS_DEFAULT:=		${OPTIONS_DEFAULT:NOFFIX}
+.endif
