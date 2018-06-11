@@ -20,7 +20,7 @@
 #
 # Note: all entries should terminate with a slash.
 #
-# $FreeBSD: head/Mk/bsd.sites.mk 463463 2018-03-03 06:50:15Z ultima $
+# $FreeBSD: head/Mk/bsd.sites.mk 465484 2018-03-24 21:12:13Z sunpoet $
 #
 
 # Where to put distfiles that don't have any other master site
@@ -489,7 +489,7 @@ WRKSRC_${_group}:=	${WRKDIR}/${GH_PROJECT_${_group}}-${GH_TAGNAME_${_group}_EXTR
 # In order to sort the subdir extraction so that foo/bar is moved in before
 # foo/bar/baz, we count the number of / in the path and use it to order the
 # targets.  This handles up to 9 levels.  The max as of r463123 is 4.
-_SITES_extract:=	${_SITES_extract} 69${GH_SUBDIR_${_group}:C=[^/]+= =g:range:[-1]}:post-extract-gh-${_group}
+_SITES_extract:=	${_SITES_extract} 69${GH_SUBDIR_${_group}:C=[^/]+= =g:[#]}:post-extract-gh-${_group}
 post-extract-gh-${_group}:
 	@${RMDIR} ${WRKSRC}/${GH_SUBDIR_${_group}} 2>/dev/null || :
 	@${MKDIR} ${WRKSRC}/${GH_SUBDIR_${_group}:H} 2>/dev/null || :
@@ -600,7 +600,7 @@ git-clone-DEFAULT: ${_GITLAB_CLONE_DIR}
 	@${ECHO_MSG} "Cloned the default GitLab repository into ${_GITLAB_CLONE_DIR}/${GL_PROJECT_DEFAULT}" | ${FMT_80}
 .  endif
 .  if !empty(GL_SUBDIR)
-_SITES_extract:=	690:post-extract-gl-DEFAULT
+_SITES_extract:=	69${GL_SUBDIR_${_group}:C=[^/]+= =g:[#]}:post-extract-gl-DEFAULT
 post-extract-gl-DEFAULT:
 	@${RMDIR} ${WRKSRC}/${GL_SUBDIR_DEFAULT} 2>/dev/null || :
 	@${MKDIR} ${WRKSRC}/${GL_SUBDIR_DEFAULT:H} 2>/dev/null || :
@@ -910,6 +910,13 @@ MASTER_SITE_OPENBSD+= \
 	https://mirror.aarnet.edu.au/pub/OpenBSD/%SUBDIR%/
 .endif
 
+.if !defined(IGNORE_MASTER_SITE_OSDN)
+.for mirror in aarnet acc c3sl cznic gigenet iij jaist nchc onet osdn pumath rwthaachen ymu
+MASTER_SITE_OSDN+= \
+	http://${mirror}.dl.osdn.jp/%SUBDIR%/
+.endfor
+.endif
+
 .if !defined(IGNORE_MASTER_SITE_OSSP)
 MASTER_SITE_OSSP+= \
 	ftp://ftp.ossp.org/pkg/%SUBDIR%/ \
@@ -1058,13 +1065,6 @@ MASTER_SITE_SOURCEFORGE+= ${p}://downloads.sourceforge.net/project/%SUBDIR%/
 	netcologne netix superb-dca2 superb-sea2 ufpr vorboss
 MASTER_SITE_SOURCEFORGE+= ${p}://${m}.dl.sourceforge.net/project/%SUBDIR%/
 .endfor
-.endfor
-.endif
-
-.if !defined(IGNORE_MASTER_SITE_SOURCEFORGE_JP)
-.for mirror in iij jaist osdn
-MASTER_SITE_SOURCEFORGE_JP+= \
-	http://${mirror}.dl.sourceforge.jp/%SUBDIR%/
 .endfor
 .endif
 
@@ -1282,7 +1282,6 @@ MASTER_SITES_ABBREVS=	CPAN:PERL_CPAN \
 			NL:NETLIB \
 			RG:RUBYGEMS \
 			SF:SOURCEFORGE \
-			SFJP:SOURCEFORGE_JP \
 			XEP:XEPKGS
 MASTER_SITES_SUBDIRS=	APACHE_COMMONS_BINARIES:${PORTNAME:S,commons-,,} \
 			APACHE_COMMONS_SOURCE:${PORTNAME:S,commons-,,} \
