@@ -430,7 +430,7 @@ index bd9f9b3..f8c3a69 100644
  
  # our own checkyesno copy
 diff --git a/lib/vm-zfs b/lib/vm-zfs
-index 44f1485..3db95fc 100644
+index 44f1485..49a5acf 100644
 --- a/lib/vm-zfs
 +++ b/lib/vm-zfs
 @@ -73,8 +73,9 @@ zfs::make_dataset(){
@@ -539,47 +539,6 @@ index 44f1485..3db95fc 100644
 -    fi
 +        # create the image dataset if we don't have it
 +        if [ ! -e "${vm_dir}/images" ]; then
-+            zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
-+            [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
-+        fi
-+
-+        # try to snapshot
-+        zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
-+        [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
-+
-+        # copy source
-+        if [ -n "${_no_compress}" ]; then
-+            _filename="${_uuid}.zfs"
- 
--    # try to snapshot
--    zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
--    [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
-+            echo "Creating guest image, this may take some time..."
-+            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
-+        else
-+            _filename="${_uuid}.zfs.xz"
- 
--    # copy source
--    if [ -n "${_no_compress}" ]; then
--        _filename="${_uuid}.zfs"
-+            echo "Creating a compressed image, this may take some time..."
-+            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
-+        fi
- 
--        echo "Creating guest image, this may take some time..."
--        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
-+        [ $? -ne 0 ] && exit 1
-+
-+        # done with the source snapshot
-+        zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
-     else
--        _filename="${_uuid}.zfs.xz"
- 
--        echo "Creating a compressed image, this may take some time..."
--        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
--    fi
-+        # create the image dataset if we don't have it
-+        if [ ! -e "${vm_dir}/images" ]; then
 +            mkdir -p ${vm_dir}/images >/dev/null 2>&1
 +            [ $? -ne 0 ] && util::err "failed to create image store ${vm_dir}/images"
 +        fi
@@ -588,19 +547,60 @@ index 44f1485..3db95fc 100644
 +        if [ -n "${_no_compress}" ]; then
 +            _filename="${_uuid}.tar"
  
--    [ $? -ne 0 ] && exit 1
+-    # try to snapshot
+-    zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
+-    [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
 +            echo "Creating guest image, this may take some time..."
 +            tar -cf ${vm_dir}/images/${_filename} -C ${vm_dir}/${_name} .
 +        else
 +            _filename="${_uuid}.tar.xz"
  
--    # done with the source snapshot
--    zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
+-    # copy source
+-    if [ -n "${_no_compress}" ]; then
+-        _filename="${_uuid}.zfs"
 +            echo "Creating a compressed image, this may take some time..."
 +            tar -cf - -C ${vm_dir}/${_name} . | xz -T0 > ${vm_dir}/images/${_filename}
 +        fi
  
+-        echo "Creating guest image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
 +        [ $? -ne 0 ] && exit 1
+     else
+-        _filename="${_uuid}.zfs.xz"
+ 
+-        echo "Creating a compressed image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
+-    fi
++        # create the image dataset if we don't have it
++        if [ ! -e "${vm_dir}/images" ]; then
++            zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
++            [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
++        fi
+ 
+-    [ $? -ne 0 ] && exit 1
++        # try to snapshot
++        zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
++        [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
+ 
+-    # done with the source snapshot
+-    zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
++        # copy source
++        if [ -n "${_no_compress}" ]; then
++            _filename="${_uuid}.zfs"
+ 
++            echo "Creating guest image, this may take some time..."
++            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
++        else
++            _filename="${_uuid}.zfs.xz"
++
++            echo "Creating a compressed image, this may take some time..."
++            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
++        fi
++
++        [ $? -ne 0 ] && exit 1
++
++        # done with the source snapshot
++        zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
 +    fi
      # create a description file
      sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" "description=${_desc}" >/dev/null 2>&1
