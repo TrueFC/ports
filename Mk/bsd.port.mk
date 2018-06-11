@@ -1,7 +1,7 @@
 #-*- tab-width: 4; -*-
 # ex:ts=4
 #
-# $FreeBSD: head/Mk/bsd.port.mk 461196 2018-02-08 05:52:06Z bdrewery $
+# $FreeBSD: head/Mk/bsd.port.mk 463463 2018-03-03 06:50:15Z ultima $
 #	$NetBSD: $
 #
 #	bsd.port.mk - 940820 Jordan K. Hubbard.
@@ -1441,10 +1441,6 @@ USES+=mysql:${USE_MYSQL}
 .include "${PORTSDIR}/Mk/bsd.sdl.mk"
 .endif
 
-.if defined(USE_XEPKGS)
-.include "${PORTSDIR}/Mk/bsd.xepkgs.mk"
-.endif
-
 .if !defined(UID)
 UID!=	${ID} -u
 .endif
@@ -1683,6 +1679,11 @@ DEV_WARNING+=	"You are using USE_GITHUB and WRKSRC is set which is wrong.  Set G
 .endif
 WRKSRC?=		${WRKDIR}/${GH_PROJECT}-${GH_TAGNAME_EXTRACT}
 .endif
+
+.if !default(IGNORE_MASTER_SITE_GITLAB) && defined(USE_GITLAB) && empty(USE_GITLAB:Mnodefault)
+WRKSRC?=		${WRKDIR}/${GL_PROJECT}-${GL_COMMIT}-${GL_COMMIT}
+.endif
+
 # If the distname is not extracting into a specific subdirectory, have the
 # ports framework force extract into a subdirectory so that metadata files
 # do not get in the way of the build, and vice-versa.
@@ -2114,8 +2115,12 @@ FETCH_CMD?=		${FETCH_BINARY} ${FETCH_ARGS}
 .if defined(RANDOMIZE_MASTER_SITES)
 .if exists(/usr/games/random)
 RANDOM_CMD?=	/usr/games/random
+.elif exists(/usr/bin/random)
+RANDOM_CMD?=	/usr/bin/random
+.endif
+.if defined(RANDOM_CMD) && !empty(RANDOM_CMD)
 RANDOM_ARGS?=	-w -f -
-_RANDOMIZE_SITES=	 |${RANDOM_CMD} ${RANDOM_ARGS}
+_RANDOMIZE_SITES=	 ${RANDOM_CMD} ${RANDOM_ARGS}
 .endif
 .endif
 
@@ -2595,7 +2600,7 @@ VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	tcl textproc tk \
 	ukrainian vietnamese windowmaker wayland www \
 	x11 x11-clocks x11-drivers x11-fm x11-fonts x11-servers x11-themes \
-	x11-toolkits x11-wm xepkgs xfce zope
+	x11-toolkits x11-wm xepkgs xfce zope base
 
 check-categories:
 .for cat in ${CATEGORIES}
@@ -2950,6 +2955,12 @@ DEPENDS_TARGET+=	install
 DEPENDS_TARGET+=	clean
 DEPENDS_ARGS+=	NOCLEANDEPENDS=yes
 .endif
+.endif
+
+.if defined(USE_GITLAB) && !${USE_GITLAB:Mnodefault} && empty(GL_COMMIT_DEFAULT)
+check-makevars::
+	@${ECHO_MSG} "GL_COMMIT is a required 40 character hash for use USE_GITLAB"
+	@${FALSE}
 .endif
 
 ################################################################
@@ -3646,11 +3657,12 @@ package-message:
 
 # Empty pre-* and post-* targets
 
+.if exists(${SCRIPTDIR})
 .for stage in pre post
 .for name in pkg check-sanity fetch extract patch configure build stage install package
 
-.if exists(${SCRIPTDIR}/${stage}-${name})
 .if !target(${stage}-${name}-script)
+.if exists(${SCRIPTDIR}/${stage}-${name})
 ${stage}-${name}-script:
 	@ cd ${.CURDIR} && ${SETENV} ${SCRIPTS_ENV} ${SH} \
 			${SCRIPTDIR}/${.TARGET:S/-script$//}
@@ -3659,6 +3671,7 @@ ${stage}-${name}-script:
 
 .endfor
 .endfor
+.endif
 
 .if !target(pretty-print-www-site)
 pretty-print-www-site:
@@ -4717,6 +4730,7 @@ ${_t}:
 .endif
 .endfor
 .endif
+PORTS_ENV_VARS+=	${_EXPORTED_VARS}
 
 .if !target(pre-check-config)
 pre-check-config:
