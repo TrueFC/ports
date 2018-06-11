@@ -430,7 +430,7 @@ index bd9f9b3..f8c3a69 100644
  
  # our own checkyesno copy
 diff --git a/lib/vm-zfs b/lib/vm-zfs
-index 44f1485..322e230 100644
+index 44f1485..3db95fc 100644
 --- a/lib/vm-zfs
 +++ b/lib/vm-zfs
 @@ -73,8 +73,9 @@ zfs::make_dataset(){
@@ -525,6 +525,120 @@ index 44f1485..322e230 100644
      done
  }
  
+@@ -345,36 +357,58 @@ zfs::image_create(){
+     [ -z "${_desc}" ] && _desc="No description provided"
+ 
+     datastore::get_guest "${_name}" || util::err "${_name} does not appear to be a valid virtual machine"
+-    [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ] && util::err "this command is only supported on zfs datastores"
++    if [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ]; then
+ 
+-    # create the image dataset if we don't have it
+-    if [ ! -e "${vm_dir}/images" ]; then
+-        zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
+-        [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
+-    fi
++        # create the image dataset if we don't have it
++        if [ ! -e "${vm_dir}/images" ]; then
++            zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
++            [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
++        fi
++
++        # try to snapshot
++        zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
++        [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
++
++        # copy source
++        if [ -n "${_no_compress}" ]; then
++            _filename="${_uuid}.zfs"
+ 
+-    # try to snapshot
+-    zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
+-    [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
++            echo "Creating guest image, this may take some time..."
++            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
++        else
++            _filename="${_uuid}.zfs.xz"
+ 
+-    # copy source
+-    if [ -n "${_no_compress}" ]; then
+-        _filename="${_uuid}.zfs"
++            echo "Creating a compressed image, this may take some time..."
++            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
++        fi
+ 
+-        echo "Creating guest image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
++        [ $? -ne 0 ] && exit 1
++
++        # done with the source snapshot
++        zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
+     else
+-        _filename="${_uuid}.zfs.xz"
+ 
+-        echo "Creating a compressed image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
+-    fi
++        # create the image dataset if we don't have it
++        if [ ! -e "${vm_dir}/images" ]; then
++            mkdir -p ${vm_dir}/images >/dev/null 2>&1
++            [ $? -ne 0 ] && util::err "failed to create image store ${vm_dir}/images"
++        fi
++
++        # copy source
++        if [ -n "${_no_compress}" ]; then
++            _filename="${_uuid}.tar"
+ 
+-    [ $? -ne 0 ] && exit 1
++            echo "Creating guest image, this may take some time..."
++            tar -cf ${vm_dir}/images/${_filename} -C ${vm_dir}/${_name} .
++        else
++            _filename="${_uuid}.tar.xz"
+ 
+-    # done with the source snapshot
+-    zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
++            echo "Creating a compressed image, this may take some time..."
++            tar -cf - -C ${vm_dir}/${_name} . | xz -T0 > ${vm_dir}/images/${_filename}
++        fi
+ 
++        [ $? -ne 0 ] && exit 1
++    fi
+     # create a description file
+     sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" "description=${_desc}" >/dev/null 2>&1
+     sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" "created=${_date}" >/dev/null 2>&1
+@@ -425,16 +459,30 @@ zfs::image_provision(){
+ 
+     # check format of image
+     case ${_type} in
++        tar) mkdir -p ${vm_dir}/${_name}; tar -xpf ${vm_dir}/images/${_file} -C ${vm_dir}/${_name} ;;
+         zfs) cat "${vm_dir}/images/${_file}" | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
+-        xz)  cat "${vm_dir}/images/${_file}" | xz -d | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
++        xz)
++            _type=${_file%.$_type}
++            case ${_type##*.} in
++            tar)
++		mkdir -p ${vm_dir}/${_name}
++                cat ${vm_dir}/images/${_file} | xz -d | tar -xpf - -C ${vm_dir}/${_name}
++		;;
++            zfs)
++                cat "${vm_dir}/images/${_file}" | xz -d | zfs recv "${VM_DS_ZFS_DATASET}/${_name}"
++		;;
++	    esac
++	    ;;
+         *)   util::err "unsupported guest image type - '${_type}'" ;;
+     esac
+ 
+     # error unpacking?
+     [ $? -ne 0 ] && util::err "errors occured while trying to unpackage the image file"
+ 
+-    # remove the original snapshot
+-    zfs destroy -r "${VM_DS_ZFS_DATASET}/${_name}@${_uuid%%-*}" >/dev/null 2>&1
++    if [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ]; then
++        # remove the original snapshot
++        zfs destroy -r "${VM_DS_ZFS_DATASET}/${_name}@${_uuid%%-*}" >/dev/null 2>&1
++    fi
+ 
+     # rename the guest configuration file
+     mv "${VM_DS_PATH}/${_name}/${_oldname}.conf" "${VM_DS_PATH}/${_name}/${_name}.conf" >/dev/null 2>&1
 diff --git a/vm b/vm
 index 11568dc..8388ee2 100644
 --- a/vm
@@ -566,7 +680,7 @@ index 11568dc..8388ee2 100644
 -cmd::parse ${VM_COMMAND}
 +cmd::parse "$@"
 diff --git a/vm.8 b/vm.8
-index 4540f65..00bc6a4 100644
+index 4540f65..388c23e 100644
 --- a/vm.8
 +++ b/vm.8
 @@ -86,7 +86,8 @@
@@ -701,7 +815,7 @@ index 4540f65..00bc6a4 100644
  .It Xo
  .Op Fl fi
  .Cm start Ar name Ar ...
-@@ -918,15 +934,17 @@ Run the receiver in triple stage mode which expects three snapshots. See the
+@@ -918,24 +934,23 @@ Run the receiver in triple stage mode which expects three snapshots. See the
  command above for details on this mode.
  .El
  .Xc
@@ -723,3 +837,12 @@ index 4540f65..00bc6a4 100644
  .Xr fetch 1 .
  .It Cm image list
  List available images. Any virtual machine can be packaged into an image, which can then be
+ used to create additional machines. All images have a globally unique ID (UUID) which is 
+ used to identify them. The list command shows the UUID, the original machine name, the
+ date it was created and a short description of the image.
+-.Pp
+-Please note that these commands rely on using ZFS featured to package/unpackage the images,
+-and as such are only available when using a ZFS dataset as the storage location.
+ .It Xo
+ .Cm image create
+ .Op Fl d Ar description
