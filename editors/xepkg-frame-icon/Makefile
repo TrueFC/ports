@@ -10,7 +10,7 @@ COMMENT=	Set up mode-specific icons for each frame under XEmacs
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

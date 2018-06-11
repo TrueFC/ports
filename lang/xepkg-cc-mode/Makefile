@@ -10,7 +10,7 @@ COMMENT=	C,C++,Objective-C,Java,CORBA IDL,Pike and AWK language support
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

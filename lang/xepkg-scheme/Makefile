@@ -10,7 +10,7 @@ COMMENT=	Front-end support for Inferior Scheme
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

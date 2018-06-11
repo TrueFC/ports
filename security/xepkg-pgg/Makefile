@@ -10,7 +10,7 @@ COMMENT=	Emacs interface to various PGP implementations
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

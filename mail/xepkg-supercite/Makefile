@@ -10,7 +10,7 @@ COMMENT=	An Emacs citation tool for News and Mail messages
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

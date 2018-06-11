@@ -499,6 +499,6 @@ X11_WM_DESC=			X Window System window managers.
 XWEM_DESC=				X Emacs Window Manager
 XWEM_RUN_DEPENDS=		xepkg-xwem${PKGNAMESUFFIX}>=1.23:${PORTSDIR}/x11-wm/xepkg-xwem
 
-USE_XEPKGS=				yes
+USES=					xemacs
 
 .include <bsd.port.mk>

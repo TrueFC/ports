@@ -10,7 +10,7 @@ COMMENT=	Wnn (4.2 and 6) support. SJ3 support
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

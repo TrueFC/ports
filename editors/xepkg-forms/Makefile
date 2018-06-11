@@ -10,7 +10,7 @@ COMMENT=	Forms editing support (obsolete, use Widget instead)
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

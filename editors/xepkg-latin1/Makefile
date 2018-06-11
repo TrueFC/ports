@@ -25,6 +25,6 @@ RUN_DEPENDS=	xepkg-c-support${PKGNAMESUFFIX}>=1.22:${PORTSDIR}/lang/xepkg-c-supp
 		xepkg-xemacs-base${PKGNAMESUFFIX}>=2.27:${PORTSDIR}/editors/xepkg-xemacs-base \
 		xepkg-xemacs-devel${PKGNAMESUFFIX}>=1.80:${PORTSDIR}/devel/xepkg-xemacs-devel
 
-USE_XEPKGS=	yes
+USES=		xemacs
 
 .include <bsd.port.mk>

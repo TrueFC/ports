@@ -10,7 +10,7 @@ COMMENT=	Emacs MIME support not needed for gnus >= 5.8.0
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

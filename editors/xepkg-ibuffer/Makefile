@@ -10,7 +10,7 @@ COMMENT=	Advanced replacement for buffer-menu
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

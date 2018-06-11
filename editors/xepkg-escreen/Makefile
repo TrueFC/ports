@@ -10,7 +10,7 @@ COMMENT=	Multiple editing sessions within a single frame (like screen)
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

@@ -10,7 +10,7 @@ COMMENT=	Printing functions and utilities
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

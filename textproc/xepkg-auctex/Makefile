@@ -10,7 +10,7 @@ COMMENT=	Basic TeX/LaTeX support
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

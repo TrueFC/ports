@@ -10,7 +10,7 @@ COMMENT=	Japanese Language Input Method
 
 LICENSE=	GPLv2
 
-USE_XEPKGS=	yes
+USES=		xemacs
 NO_ARCH=	yes
 
 ENCODING_FILES=	lisp/skk/*.el etc/skk/ReadMe etc/skk/SKK-JISYO.* etc/skk/SKK.tut*
