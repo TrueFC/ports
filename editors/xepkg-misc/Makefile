@@ -4,6 +4,7 @@
 PORTNAME=				misc
 PORTVERSION=			1.0
 CATEGORIES=				editors xepkgs
+PKGNAMEPREFIX=			xepkg-
 
 MAINTAINER=				xemacs@FreeBSD.org
 COMMENT=				Meta port for miscellaneous XEmacs pacakges
@@ -499,6 +500,6 @@ X11_WM_DESC=			X Window System window managers.
 XWEM_DESC=				X Emacs Window Manager
 XWEM_RUN_DEPENDS=		xepkg-xwem${PKGNAMESUFFIX}>=1.23:${PORTSDIR}/x11-wm/xepkg-xwem
 
-USES=					xemacs
+USES=					metaport
 
 .include <bsd.port.mk>

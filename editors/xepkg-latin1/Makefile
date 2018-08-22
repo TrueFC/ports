@@ -3,6 +3,7 @@
 PORTNAME=	latin1
 PORTVERSION=	1.0
 CATEGORIES=	editors xepkgs
+PKGNAMEPREFIX=	xepkg-
 
 MAINTAINER=	xemacs@FreeBSD.org
 COMMENT=	Meta port for latin1 XEmacs pacakges
@@ -25,6 +26,6 @@ RUN_DEPENDS=	xepkg-c-support${PKGNAMESUFFIX}>=1.22:${PORTSDIR}/lang/xepkg-c-supp
 		xepkg-xemacs-base${PKGNAMESUFFIX}>=2.27:${PORTSDIR}/editors/xepkg-xemacs-base \
 		xepkg-xemacs-devel${PKGNAMESUFFIX}>=1.80:${PORTSDIR}/devel/xepkg-xemacs-devel
 
-USES=		xemacs
+USES=		metaport
 
 .include <bsd.port.mk>

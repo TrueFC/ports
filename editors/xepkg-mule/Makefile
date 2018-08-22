@@ -3,6 +3,7 @@
 PORTNAME=	mule
 PORTVERSION=	1.0
 CATEGORIES=	editors xepkgs
+PKGNAMEPREFIX=	xepkg-
 
 MAINTAINER=	xemacs@FreeBSD.org
 COMMENT=	Meta port for Mule XEmacs pacakges
@@ -20,6 +21,6 @@ RUN_DEPENDS=	xepkg-ddskk${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/japanese/xepkg-ddskk 
 		xepkg-mule-base${PKGNAMESUFFIX}>=1.56:${PORTSDIR}/editors/xepkg-mule-base \
 		xepkg-mule-ucs${PKGNAMESUFFIX}>=1.18:${PORTSDIR}/editors/xepkg-mule-ucs
 
-USES=		xemacs
+USES=		metaport
 
 .include <bsd.port.mk>
