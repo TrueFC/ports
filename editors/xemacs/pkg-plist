@@ -1238,7 +1238,7 @@
 %%XEMACS_ARCH_INDEP%%lib/xemacs-%%XEMACS_VER%%/lisp/x-win-sun.elc
 %%XEMACS_ARCH_INDEP%%lib/xemacs-%%XEMACS_VER%%/lisp/x-win-xfree86.el
 %%XEMACS_ARCH_INDEP%%lib/xemacs-%%XEMACS_VER%%/lisp/x-win-xfree86.elc
-%%LOCAL%%lib/xemacs/mule-packages/etc/app-defaults/Emacs
+%%LOCAL%%lib/xemacs/mule-packages/etc/app-defaults/ja/Emacs
 %%XEMACS_ARCH_INDEP%%man/man1/ctags.1.gz
 %%XEMACS_ARCH_INDEP%%man/man1/etags.1.gz
 %%XEMACS_ARCH_INDEP%%man/man1/gnuattach.1.gz
