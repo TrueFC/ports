@@ -1,0 +1,17 @@
+***********************************************************************
+* Japanese online manual has been successfully installed. If you      *
+* would like to read with Japanese man pages, Set below:              *
+*                                                                     *
+* 1. Set LC_ALL, LC_CTYPE, or LANG to ja_JP.UTF-8 like:               *
+*                                                                     *
+*   % setenv LANG ja_JP.UTF-8                                         *
+*                                                                     *
+* 2. Symlink /usr/share/man/ja_JP.UTF-8 to /usr/local/man/ja like:    *
+*                                                                     *
+*   # ln -sfh /usr/local/man/ja /usr/share/man/ja_JP.UTF-8            *
+*                                                                     *
+* You can still read original man pages by man with '-o' like:        *
+*                                                                     *
+*   % man -o man                                                      *
+*                                                                     *
+***********************************************************************
