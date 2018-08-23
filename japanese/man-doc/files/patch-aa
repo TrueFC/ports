@@ -1,0 +1,11 @@
+--- Makefile.org	2018-08-23 07:10:45.439722000 +0900
++++ Makefile	2018-08-23 07:11:55.490798000 +0900
+@@ -4,7 +4,7 @@
+ SUBDIR=	man1 man2 man3 man4 man5 man6 man7 man8 man9
+ 
+ makedb:
+-	LANG=ja_JP.EUC jmakewhatis ${DESTDIR}${PREFIX}/man/ja/
++	LANG=ja_JP.UTF-8 jmakewhatis ${DESTDIR}${PREFIX}/man/ja/
+ 
+ package:
+ 
