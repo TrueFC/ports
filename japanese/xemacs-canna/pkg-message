@@ -1,0 +1,10 @@
+***********************************************************************
+* XEmacs for Japanese with Canna input installed successfully. If you *
+* would like to set menu all with Japanese, copy Emacs.xemacs-canna   *
+* resource to default one:                                            *
+*                                                                     *
+*   # cd  /usr/local/lib/xemacs/mule-packages/etc/app-defaults        *
+*   # mv Emacs Emacs.org                                              *
+*   # mv Emacs.xemacs-canna Emacs                                     *
+*                                                                     *
+***********************************************************************

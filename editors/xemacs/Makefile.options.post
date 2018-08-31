@@ -22,7 +22,7 @@ USE_GNOME=			gtk12
 PLIST_FILES+=		man/ja/man1/xemacs.1.gz
 .	endif
 PLIST_FILES+=		${XEMACS_PACKAGESDIR}/etc/app-defaults/${LOCALE}
-PLIST_SUB+=			LOCALE=${LOCALE} LOCAL=""
+PLIST_SUB+=			LOCALE=${LOCALE} LOCAL="" RESSUFX=.${PORTNAME}
 .else
 PLIST_SUB+=			LOCAL="@comment "
 .endif

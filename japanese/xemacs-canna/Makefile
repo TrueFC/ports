@@ -13,6 +13,7 @@ CONFLICTS=	emacs21-[0-9]* emacs22-[0-9]* emacs23-[0-9]* emacs24-[0-9]* \
 
 XEMACS_INSTALL=	${PORTNAME}
 DESCR=		${.CURDIR}/pkg-descr
+PKGMESSAGE=	${.CURDIR}/pkg-message
 
 L10N=		ja
 

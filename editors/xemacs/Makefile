@@ -146,11 +146,11 @@ post-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/man/ja/man1
 	${INSTALL_MAN} ${WRKSRC}/etc/xemacs-ja.1 \
 		${STAGEDIR}${PREFIX}/man/ja/man1/xemacs.1
-	${MKDIR} ${STAGEDIR}${PREFIX}/${XEMACS_PACKAGESDIR}/etc/app-defaults
+	${MKDIR} ${STAGEDIR}${PREFIX}/${XEMACS_PACKAGESDIR}/etc/app-defaults/ja
+	${INSTALL_DATA} ${FILESDIR}/Emacs \
+		${STAGEDIR}${PREFIX}/${XEMACS_PACKAGESDIR}/etc/app-defaults/ja/Emacs.${PORTNAME}
 	${LN} -sf ja \
 		${STAGEDIR}${PREFIX}/${XEMACS_PACKAGESDIR}/etc/app-defaults/${LOCALE}
-	${INSTALL_DATA} ${FILESDIR}/Emacs \
-		${STAGEDIR}${PREFIX}/${XEMACS_PACKAGESDIR}/etc/app-defaults/ja
 .  endif
 .endif
 
