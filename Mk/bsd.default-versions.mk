@@ -1,4 +1,4 @@
-# $FreeBSD: head/Mk/bsd.default-versions.mk 475856 2018-07-29 21:59:44Z gerald $
+# $FreeBSD: head/Mk/bsd.default-versions.mk 478711 2018-09-01 17:05:47Z antoine $
 #
 # MAINTAINER:	ports@FreeBSD.org
 #
@@ -87,7 +87,7 @@ PYTHON3_DEFAULT?=	3.6
 # Possible values: 2.3, 2.4, 2.5
 RUBY_DEFAULT?=		2.4
 # Possible values: 4.6, 4.7, 4.8
-SAMBA_DEFAULT?=		4.6
+SAMBA_DEFAULT?=		4.7
 # Possible values: base, openssl, openssl-devel, libressl, libressl-devel
 .if !defined(SSL_DEFAULT)
 #	If no preference was set, check for an installed base version
