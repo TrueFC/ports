@@ -7,6 +7,10 @@ which are not actually maintained by FreeBSD, and which can not be handled by Fr
 
 ## Update tag history
 
+* **484802** (Mon, 12 Nov 2018 21:46:48)
+
+	for ports revision 484802,
+
 * **482838** (Wed 24 Oct 2018 07:17:03)
 
 	for ports revision 482838,
