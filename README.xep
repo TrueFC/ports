@@ -1,6 +1,6 @@
-* XEPkgs の変更個所(revision:485224)
+* XEPkgs の変更個所(revision:485516)
 (1) bsd.default-versions.mk
-1) XEMACS_DEFAULT を追加(132 行あたり)
+1) XEMACS_DEFAULT を追加(134 行あたり)
 
 # Possible_values: basic canna devel devel_canna
 XEMACS_DEFAULT?=	basic
