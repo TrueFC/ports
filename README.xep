@@ -1,4 +1,4 @@
-* XEPkgs の変更個所(revision:485516)
+* XEPkgs の変更個所(revision:485941)
 (1) bsd.default-versions.mk
 1) XEMACS_DEFAULT を追加(134 行あたり)
 
