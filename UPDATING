@@ -1,0 +1,72 @@
+Updating Information for FreeBSD ports users.
+
+This file is maintained and copyrighted by Kazuhiko Kiriyama <kiri@TrueFC.org>.
+See end of file for further details.  For commonly done items, please see the
+COMMON ITEMS: section later in the file.  These instructions assume that you
+basically know what you are doing.
+
+20190213:
+	Add devel/xepkg-git, mail/xepkg-prom-wl and textproc/xepkg-sdoc-mode.
+	Upgrade mail/xepkg-wl to 1.11 (2.15.9 head:b85080963a).
+	Created this file (UPDATING) and all updating informations move from
+	README.md to UPDATING.
+
+20181130:
+	TAG: 486173 created for ports revision 486173.
+	Fixed OpenSSL 1.1 API problem of www/nginx.
+
+20181127:
+	TAG: 485941 created for ports revision 485941.
+
+20181122:
+	TAG: 485516 created for ports revision 485516.
+
+20181119:
+	TAG: 485224 created for ports revision 485224.
+
+20181112:
+	TAG: 484802 created for ports revision 484802.
+
+20181024:
+	TAG: 482838 created for ports revision 482838.
+
+20180903:
+	TAG: 478789 created for ports revision 478789.
+
+20180823:
+	TAG: 477870 created for ports revision 477870.
+
+20180611:
+	TAG: 471092 created for ports revision 471092.
+	TAG: 468211 created for ports revision 468211.
+	TAG: 465515 created for ports revision 465515.
+	TAG: 463612 created for ports revision 463612.
+
+20180608:
+	TAG: 461680 created for ports revision 461680, lmainkx direction.
+
+COMMON ITEMS:
+FORMAT:
+
+This file contains a list, in reverse chronological order, of major
+breakages in tracking https://github.com/TrueFC/ports.
+
+Copyright information:
+
+Copyright 2019 Kiriyama Kazuhiko.  All Rights Reserved.
+
+Redistribution, publication, translation and use, with or without
+modification, in full or in part, in any form or format of this
+document are permitted without further permission from the author.
+
+THIS DOCUMENT IS PROVIDED BY WARNER LOSH ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.  IN NO EVENT SHALL WARNER LOSH BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
