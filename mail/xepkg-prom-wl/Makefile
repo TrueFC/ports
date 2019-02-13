@@ -1,12 +1,12 @@
 # $FreeBSD$
 
-PORTNAME=	wl
-PORTVERSION=	1.11
+PORTNAME=	prom-wl
+PORTVERSION=	1.10
 CATEGORIES=	mail xepkgs
 MASTER_SITES=	XEP
 
 MAINTAINER=	xemacs@FreeBSD.org
-COMMENT=	Yet Another Message Interface on Emacsen
+COMMENT=	Procmail reader for Wanderlust on Emacsen
 
 LICENSE=	GPLv2
 

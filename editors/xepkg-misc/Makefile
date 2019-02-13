@@ -16,6 +16,7 @@ OPTIONS_DEFAULT=		SOUNDS_AU \
 						CLEARCASE \
 						EDE \
 						FLIM \
+						GIT \
 						GNATS \
 						PCL_CVS \
 						RE_BUILDER \
@@ -75,6 +76,7 @@ OPTIONS_DEFAULT=		SOUNDS_AU \
 						MEW \
 						MH_E \
 						RMAIL \
+						PROM_WL \
 						SIEVE \
 						SUPERCITE \
 						VM \
@@ -131,6 +133,7 @@ SOUNDS_WAV_RUN_DEPENDS=	xepkg-sounds-wav${PKGNAMESUFFIX}>=1.12:${PORTSDIR}/audio
 OPTIONS_GROUP+=			DEVEL
 OPTIONS_GROUP_DEVEL=	CLEARCASE \
 						EDE \
+						GIT \
 						GNATS \
 						MERCURIAL \
 						PCL_CVS \
@@ -140,6 +143,7 @@ OPTIONS_GROUP_DEVEL=	CLEARCASE \
 DEVEL_DESC=				Software development utilities and libraries.
 CLEARCASE_DESC=			New Clearcase Version Control for XEmacs (UNIX, Windows)
 EDE_DESC=				Emacs Development Environment
+GIT_DESC=				A user interface for git
 GNATS_DESC=				XEmacs bug reports
 MERCURIAL_DESC=			Support for the Mercurial distributed SCM
 PCL_CVS_DESC=			CVS frontend
@@ -148,6 +152,7 @@ VC_CC_DESC=				Version Control for ClearCase (UnFree) systems
 VC_DESC=				Version Control for Free systems
 CLEARCASE_RUN_DEPENDS=	xepkg-clearcase${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/devel/xepkg-clearcase
 EDE_RUN_DEPENDS=		xepkg-ede${PKGNAMESUFFIX}>=1.03:${PORTSDIR}/devel/xepkg-ede
+GIT_RUN_DEPENDS=		xepkg-git${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/devel/xepkg-git
 GNATS_RUN_DEPENDS=		xepkg-gnats${PKGNAMESUFFIX}>=1.17:${PORTSDIR}/devel/xepkg-gnats
 MERCURIAL_RUN_DEPENDS=	xepkg-mercurial${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/devel/xepkg-mercurial
 PCL_CVS_RUN_DEPENDS=	xepkg-pcl-cvs${PKGNAMESUFFIX}>=1.70:${PORTSDIR}/devel/xepkg-pcl-cvs
@@ -322,6 +327,7 @@ OPTIONS_GROUP_MAIL=		FOOTNOTE \
 						MEW \
 						MH_E \
 						RMAIL \
+						PROM_WL \
 						SIEVE \
 						SUPERCITE \
 						VMEDITORS \
@@ -331,6 +337,7 @@ FOOTNOTE_DESC=			Footnoting in mail message editing modes
 MEW_DESC=				Messaging in an Emacs World
 MH_E_DESC=				The XEmacs Interface to the MH Mail System
 RMAIL_DESC=				An obsolete Emacs mailer
+PROM_WL_DESC=			Procmail reader for Wanderlust on Emacsen
 SIEVE_DESC=				Manage Sieve email filtering scripts
 SUPERCITE_DESC=			An Emacs citation tool for News and Mail messages
 VM_DESC=				An Emacs mailer
@@ -339,10 +346,11 @@ FOOTNOTE_RUN_DEPENDS=	xepkg-footnote${PKGNAMESUFFIX}>=1.16:${PORTSDIR}/mail/xepk
 MEW_RUN_DEPENDS=		xepkg-mew${PKGNAMESUFFIX}>=1.19:${PORTSDIR}/mail/xepkg-mew
 MH_E_RUN_DEPENDS=		xepkg-mh-e${PKGNAMESUFFIX}>=1.32:${PORTSDIR}/mail/xepkg-mh-e
 RMAIL_RUN_DEPENDS=		xepkg-rmail${PKGNAMESUFFIX}>=1.14:${PORTSDIR}/mail/xepkg-rmail
+PROM_WL_RUN_DEPENDS=	xepkg-prom-wl${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/mail/xepkg-prom-wl
 SIEVE_RUN_DEPENDS=		xepkg-sieve${PKGNAMESUFFIX}>=1.18:${PORTSDIR}/mail/xepkg-sieve
 SUPERCITE_RUN_DEPENDS=	xepkg-supercite${PKGNAMESUFFIX}>=1.21:${PORTSDIR}/mail/xepkg-supercite
 VM_RUN_DEPENDS=			xepkg-vm${PKGNAMESUFFIX}>=8.08:${PORTSDIR}/mail/xepkg-vm
-WL_RUN_DEPENDS=			xepkg-wl${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/mail/xepkg-wl
+WL_RUN_DEPENDS=			xepkg-wl${PKGNAMESUFFIX}>=1.11:${PORTSDIR}/mail/xepkg-wl
 
 OPTIONS_GROUP+=			MATH
 OPTIONS_GROUP_MATH=		CALC

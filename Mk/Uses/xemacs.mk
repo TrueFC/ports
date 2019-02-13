@@ -171,6 +171,7 @@ _XEMACS_MISC_PACKAGES_NAMES=	Sun \
 			frame-icon \
 			games \
 			general-docs \
+			git \
 			gnats \
 			gnus \
 			guided-tour \
@@ -198,6 +199,7 @@ _XEMACS_MISC_PACKAGES_NAMES=	Sun \
 			pcomplete \
 			perl-modes \
 			pgg \
+			prom-wl \
 			ps-print \
 			psgml-dtds \
 			psgml \
