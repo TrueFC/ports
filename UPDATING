@@ -5,6 +5,9 @@ See end of file for further details.  For commonly done items, please see the
 COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
+20190321:
+	Add lang/clisp 2.49.92 (date:2018-02-18 tag:clisp-2.49.92-2018-02-18).
+
 20190213:
 	Add devel/xepkg-git, mail/xepkg-prom-wl and textproc/xepkg-sdoc-mode.
 	Upgrade mail/xepkg-wl to 1.11 (2.15.9 head:b85080963a).
