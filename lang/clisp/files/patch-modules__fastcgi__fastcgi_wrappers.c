@@ -1,5 +1,5 @@
---- modules/fastcgi/fastcgi_wrappers.c.org	2018-02-18 21:07:29.000000000 +0900
-+++ modules/fastcgi/fastcgi_wrappers.c	2019-03-21 10:47:38.848315000 +0900
+--- modules/fastcgi/fastcgi_wrappers.c.org	2018-11-12 09:05:07.000000000 +0900
++++ modules/fastcgi/fastcgi_wrappers.c	2019-03-21 16:35:52.077520000 +0900
 @@ -41,7 +41,26 @@
  
  /* Crank this up as needed */
@@ -9,7 +9,7 @@
 +char* t_strndup(const char* string, size_t n)
 +{
 +	char* copy_string = 0;
- 
++ 
 +	if(0 == string || 0 == n)
 +		return 0;
 +	
@@ -19,7 +19,7 @@
 +	
 +	memcpy(copy_string, string, n);
 +	*(copy_string + n) = '\0';		
-+
+ 
 +	return copy_string;
 +}
 +#endif
@@ -33,9 +33,9 @@
      else {
 +#ifdef __FreeBSD__
 +		result[i] = t_strndup(*envp, equ - *envp);
-+#else							
++#else
        result[i] = strndup(*envp, equ - *envp);
-+#endif	  
++#endif
        result[i+1] = strdup(equ + 1);
      }
    }

@@ -1,6 +1,6 @@
---- src/makemake.in.org	2018-02-18 21:07:29.000000000 +0900
-+++ src/makemake.in	2019-03-21 11:01:21.370145000 +0900
-@@ -2289,7 +2289,7 @@
+--- src/makemake.in.org	2018-11-12 09:05:07.000000000 +0900
++++ src/makemake.in	2019-03-21 16:37:47.670006000 +0900
+@@ -2294,7 +2294,7 @@
  echol "psdir   = ${PSDIR}"
  echol "pdfdir  = ${PDFDIR}"
  echol "libdir  = ${LIBDIR}"
