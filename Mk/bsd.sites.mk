@@ -20,7 +20,7 @@
 #
 # Note: all entries should terminate with a slash.
 #
-# $FreeBSD: head/Mk/bsd.sites.mk 482112 2018-10-14 20:17:25Z arved $
+# $FreeBSD: head/Mk/bsd.sites.mk 494205 2019-02-28 21:36:11Z sunpoet $
 #
 
 # Where to put distfiles that don't have any other master site
@@ -128,6 +128,10 @@ MASTER_SITE_CRAN+= \
 
 .if !defined(IGNORE_MASTER_SITE_CRAN_ARCHIVE)
 MASTER_SITE_CRAN_ARCHIVE+= ${MASTER_SITE_CRAN:S,$,Archive/${PORTNAME}/,}
+.endif
+
+.if !defined(IGNORE_MASTER_SITE_CRATESIO)
+MASTER_SITE_CRATESIO+=	https://crates.io/api/v1/crates/%SUBDIR%/download?dummy=/
 .endif
 
 .if !defined(IGNORE_MASTER_SITE_DEBIAN)
@@ -361,7 +365,7 @@ DEV_WARNING+=	"MASTER_SITES contains ${MASTER_SITES:M*/github.com/*/archive/*}, 
 # GH_TAGNAME    - name of the tag to download (2.0.1, hash, ...)
 #                 Using the name of a branch here is incorrect. It is
 #                 possible to do GH_TAGNAME= GIT_HASH to do a snapshot.
-#                 default: ${DISTVERSION}
+#                 default: ${DISTVERSIONFULL}
 #
 # GH_SUBDIR     - directory relative to WRKSRC where to move this distfile's
 #                 content after extracting.
@@ -1021,7 +1025,7 @@ MASTER_SITE_RUBY+= \
 # See http://rubygems.org/pages/about
 .if !defined(IGNORE_MASTER_SITE_RUBYGEMS)
 MASTER_SITE_RUBYGEMS+= \
-	https://rubygems.global.ssl.fastly.net/gems/%SUBDIR%/
+	https://rubygems.org/downloads/
 .endif
 
 .if !defined(IGNORE_MASTER_SITE_SAMBA)
@@ -1029,7 +1033,7 @@ MASTER_SITE_SAMBA+= \
 	https://ftp.samba.org/pub/%SUBDIR%/
 .endif
 
-# List:	http://download.savannah.gnu.org/mirmon/
+# List:	https://download.savannah.gnu.org/mirmon/
 .if !defined(IGNORE_MASTER_SITE_SAVANNAH)
 MASTER_SITE_SAVANNAH+= \
 	https://download.savannah.gnu.org/releases/%SUBDIR%/ \
@@ -1266,11 +1270,13 @@ MASTER_SITES_ABBREVS=	CPAN:PERL_CPAN \
 			RG:RUBYGEMS \
 			SF:SOURCEFORGE \
 			XEP:XEPKGS
+
 MASTER_SITES_SUBDIRS=	APACHE_COMMONS_BINARIES:${PORTNAME:S,commons-,,} \
 			APACHE_COMMONS_SOURCE:${PORTNAME:S,commons-,,} \
 			APACHE_JAKARTA:${PORTNAME:S,-,/,}/source \
 			BERLIOS:${PORTNAME:tl}.berlios \
 			CHEESESHOP:source/${DISTNAME:C/(.).*/\1/}/${DISTNAME:S/-${DISTVERSIONFULL}$//} \
+			CRATESIO:${PORTNAME}/${DISTVERSIONFULL} \
 			DEBIAN:pool/main/${PORTNAME:C/^((lib)?.).*$/\1/}/${PORTNAME} \
 			FARSIGHT:${PORTNAME} \
 			FESTIVAL:${PORTVERSION} \

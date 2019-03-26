@@ -5,6 +5,10 @@ See end of file for further details.  For commonly done items, please see the
 COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
+20190326:
+	Update for ports revision 485941.
+	TAG: 496870 created for ports revision 485941.
+
 20190322:
 	Upgrade lang/clisp to 2.49.93+ (date:2018-02-18
 	head:df3b9f6fdcff22832898e89a989eb499c0f842ed).

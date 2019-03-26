@@ -1,7 +1,7 @@
 #-*- tab-width: 4; -*-
 # ex:ts=4
 #
-# $FreeBSD: head/Mk/bsd.port.mk 484628 2018-11-10 18:12:57Z bapt $
+# $FreeBSD: head/Mk/bsd.port.mk 493977 2019-02-26 18:54:42Z sunpoet $
 #	$NetBSD: $
 #
 #	bsd.port.mk - 940820 Jordan K. Hubbard.
@@ -364,8 +364,6 @@ FreeBSD_MAINTAINER=	portmgr@FreeBSD.org
 #				 Append the cxxflags to CXXFLAGS only on the specified architecture
 ##
 # LDFLAGS_${ARCH} Append the ldflags to LDFLAGS only on the specified architecture
-# USE_SDL		- If set, this port uses the sdl libraries.
-#				  See bsd.sdl.mk for more information.
 ##
 # USE_OPENLDAP	- If set, this port uses the OpenLDAP libraries.
 #				  Implies: WANT_OPENLDAP_VER?=24
@@ -1421,8 +1419,13 @@ USES+=	mate
 .endif
 
 .if defined(USE_GL) && (!defined(USES) || !${USES:Mgl})
-DEV_WARNING+=	"Setting USE_GL without USES=gl is deprecated"
+DEV_WARNING+=	"Using USE_GL alone is deprecated, please add USES=gl."
 USES+=	gl
+.endif
+
+.if defined(USE_SDL) && (!defined(USES) || !${USES:Msdl})
+DEV_WARNING+=	"Using USE_SDL alone is deprecated, please add USES=sdl."
+USES+=	sdl
 .endif
 
 .if defined(USE_MYSQL)
@@ -1443,10 +1446,6 @@ USES+=mysql:${USE_MYSQL}
 
 .if defined(WANT_GSTREAMER) || defined(USE_GSTREAMER) || defined(USE_GSTREAMER1)
 .include "${PORTSDIR}/Mk/bsd.gstreamer.mk"
-.endif
-
-.if defined(USE_SDL)
-.include "${PORTSDIR}/Mk/bsd.sdl.mk"
 .endif
 
 .if !defined(UID)
@@ -1504,8 +1503,7 @@ FLAVORS:=	${FLAVOR} ${FLAVORS:N${FLAVOR}}
 
 .if !empty(FLAVOR) && !defined(_DID_FLAVORS_HELPERS)
 _DID_FLAVORS_HELPERS=	yes
-_FLAVOR_HELPERS_OVERRIDE=	DESCR PLIST PKGNAMEPREFIX PKGNAMESUFFIX \
-							DEPRECATED EXPIRATION_DATE
+_FLAVOR_HELPERS_OVERRIDE=	DESCR PLIST PKGNAMEPREFIX PKGNAMESUFFIX
 _FLAVOR_HELPERS_APPEND=	 	CONFLICTS CONFLICTS_BUILD CONFLICTS_INSTALL \
 							PKG_DEPENDS EXTRACT_DEPENDS PATCH_DEPENDS \
 							FETCH_DEPENDS BUILD_DEPENDS LIB_DEPENDS \
@@ -1943,10 +1941,6 @@ _FORCE_POST_PATTERNS=	rmdir kldxref mkfontscale mkfontdir fc-cache \
 
 .if defined(USE_OCAML)
 .include "${PORTSDIR}/Mk/bsd.ocaml.mk"
-.endif
-
-.if defined(USE_SDL)
-.include "${PORTSDIR}/Mk/bsd.sdl.mk"
 .endif
 
 .if defined(USE_PHP) && (!defined(USES) || ( defined(USES) && !${USES:Mphp*} ))
@@ -3442,7 +3436,7 @@ install-package:
 .if !target(check-already-installed)
 .if !defined(NO_PKG_REGISTER) && !defined(FORCE_PKG_REGISTER)
 check-already-installed:
-		@${ECHO_MSG} "===>  Checking if ${PKGBASE} already installed"; \
+		@${ECHO_MSG} "===>  Checking if ${PKGBASE} is already installed"; \
 		pkgname=`${PKG_INFO} -q -O ${PKGBASE}`; \
 		if [ -n "$${pkgname}" ]; then \
 			v=`${PKG_VERSION} -t $${pkgname} ${PKGNAME}`; \
@@ -3872,7 +3866,7 @@ _CHECKSUM_INIT_ENV= \
 # the options consistent when fetching and when makesum'ing.
 # As we're fetching new distfiles, that are not in the distinfo file, disable
 # checksum and sizes checks.
-makesum:
+makesum: check-sanity
 .if !empty(DISTFILES)
 	@${SETENV} \
 			${_DO_FETCH_ENV} ${_MASTER_SITES_ENV} \
@@ -4588,7 +4582,7 @@ check-man: stage
 .endif
 
 # Compress all manpage not already compressed which are not hardlinks
-# Find all manpages which are not compressed and are hadlinks, and only get the list of inodes concerned, for each of them compress the first one found and recreate the hardlinks for the others
+# Find all manpages which are not compressed and are hardlinks, and only get the list of inodes concerned, for each of them compress the first one found and recreate the hardlinks for the others
 # Fixes all dead symlinks left by the previous round
 .if !target(compress-man)
 compress-man:
@@ -5017,7 +5011,7 @@ showconfig: check-config
 
 .if !target(showconfig-recursive)
 showconfig-recursive:
-	@${ECHO_MSG} "===> The following configuration options are available for ${PKGNAME} and dependencies";
+	@${ECHO_MSG} "===> The following configuration options are available for ${PKGNAME} and its dependencies";
 	@recursive_cmd="showconfig"; \
 	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
@@ -5044,7 +5038,7 @@ rmconfig:
 
 .if !target(rmconfig-recursive)
 rmconfig-recursive:
-	@${ECHO_MSG} "===> Removing user-specified options for ${PKGNAME} and dependencies";
+	@${ECHO_MSG} "===> Removing user-specified options for ${PKGNAME} and its dependencies";
 	@recursive_cmd="rmconfig"; \
 	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
