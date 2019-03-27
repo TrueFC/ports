@@ -1,2 +1,3 @@
-SHA256 (prom-wl-2.7.0.tar.gz) = 964c3106e42cca9f0c069c502b19bd8157d71c0e2b513ca190f015bcb654de48
-SIZE (prom-wl-2.7.0.tar.gz) = 10563
+TIMESTAMP = 1553727254
+SHA256 (xemacs/prom-wl-1.10-pkg.tar.gz) = 84bd9590025d2e5811f4f0bc7d3fe36b1ee682098882f161dbab59d3929ce48e
+SIZE (xemacs/prom-wl-1.10-pkg.tar.gz) = 15932
