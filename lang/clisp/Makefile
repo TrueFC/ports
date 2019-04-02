@@ -25,6 +25,7 @@ USE_LDCONFIG=	yes
 USE_GHOSTSCRIPT_BUILD=	yes
 WANT_GNOME=	yes
 HAS_CONFIGURE=	yes
+CONFIGURE_ENV=	FORCE_UNSAFE_CONFIGURE=1
 CONFIGURE_ARGS=	--prefix="${PREFIX}" --mandir="${MANPREFIX}/man" \
 		--elispdir="${DATADIR}/emacs" --vimdir="${DATADIR}/vim" \
 		--docdir="${DOCSDIR}" --with-libiconv=${ICONV_PREFIX}
@@ -37,21 +38,36 @@ CPPFLAGS+=	-I${LOCALBASE}/include
 LDFLAGS+=	-L${LOCALBASE}/lib
 MAKE_JOBS_UNSAFE=yes
 
-OPTIONS_DEFINE=	BDB DBUS FASTCGI GDBM GTK2 PARI PCRE \
-		PGSQL RAWSOCK SVM THREADS WILDCARD ZLIB
-CLX_MIT_DESC=	X11 module (original MIT version)
-CLX_NEW_DESC=	X11 module (new faster version)
-PARI_DESC=	PARI (math and calc lib) module
-RAWSOCK_DESC=	Raw Socket Access module
-SVM_DESC=	Vector Machines module
+OPTIONS_DEFINE=	ASDF BDB CLX_MIT CLX_NEW DBUS FASTCGI GDBM GLIBC GTK2 \
+		JITC MATLAB NETICA ORACLE PARI PCRE PGSQL QUEENS RAWSOCK \
+		SVM THREADS ZLIB
+ASDF_DESC=	Another System Definition Facility
+BDB_DESC=	Interface to Berkeley DB from Sleepycat Software
+CLX_MIT_DESC=	Classical X11 Interface
+CLX_NEW_DESC=	Faster X11 Interface (replaces clx/mit-clx)
+DBUS_DESC=	Interface to the D-Bus message bus system
+FASTCGI_DESC=	FastCGI interface for web development
+GDBM_DESC=	Interface to GNU DBM
+GLIBC_DESC=	Interface to most of the GNU libc library
+GTK2_DESC=	Interface to the GTK library using glade
+JITC_DESC=	Use a given Just-In-Time Compiler
+SVM_DESC=	Support Vector Machine predictive analytics
+MATLAB_DESC=	Matrix calculations using Matlab
+NETICA_DESC=	Bayesian belief networks and influence diagrams
+ORACLE_DESC=	Oracle RDMBS interface
+PARI_DESC=	PARI Computer Algebra System
+PCRE_DESC=	Perl-compatible regular expressions
+PGSQL_DESC=	PostGreSQL RDMBS interface
+QUEENS_DESC=	The Queens Function (a toy example)
+RAWSOCK_DESC=	Low level socket interface
 THREADS_DESC=	Multithreaded Support (Experimental)
-WILDCARD_DESC=	Wildcard matching module
+ZLIB_DESC=	Compress vectors
 
 OPTIONS_RADIO=	CLX
 OPTIONS_RADIO_CLX=	CLX_MIT CLX_NEW
 CLX_DESC=	X11 Module Selection
 
-OPTIONS_DEFAULT=	RAWSOCK WILDCARD ZLIB
+OPTIONS_DEFAULT=BDB RAWSOCK ZLIB
 
 MAN1=		clisp.1 clisp-link.1
 SUB_FILES=	pkg-message
@@ -68,8 +84,9 @@ CONFIGURE_ARGS+=--disable-mmap
 BROKEN=		Does not compile on ia64, powerpc, or sparc64
 .endif
 
-MODULES=	BDB CLX_NEW CLX_MIT DBUS FASTCGI GDBM GTK2 PARI PCRE PGSQL \
-		RAWSOCK SVM WILDCARD ZLIB
+MODULES=	ASDF BDB CLX_MIT CLX_NEW DBUS FASTCGI GDBM GLIBC GTK2 \
+		JITC MATLAB NETICA ORACLE PARI PCRE PGSQL QUEENS RAWSOCK \
+		SVM ZLIB
 
 .for mod in ${MODULES}
 .   if ${PORT_OPTIONS:M${mod}}
@@ -79,16 +96,12 @@ PLIST_SUB+=	${mod}="@comment "
 .   endif
 .endfor
 
-.if ${PORT_OPTIONS:MNLS}
-USES+=			gettext
-PLIST_SUB+=		NLS=""
-.else
-CONFIGURE_ARGS+=	--disable-nls
-PLIST_SUB+=		NLS="@comment "
+.if ${PORT_OPTIONS:MASDF}
+CONFIGURE_ARGS+=--with-module=asdf
 .endif
 
 .if ${PORT_OPTIONS:MBDB}
-USE_BDB=	43+
+USES+=		bdb
 CONFIGURE_ARGS+=--with-module=berkeley-db
 CPPFLAGS+=	-I${LOCALBASE}/include/db${BDB_VER}
 LDFLAGS+=	-L${LOCALBASE}/lib/db${BDB_VER}
@@ -105,18 +118,23 @@ CONFIGURE_ARGS+=--with-module=clx/new-clx
 .endif
 
 .if ${PORT_OPTIONS:MDBUS}
-LIB_DEPENDS+=	libdbus-1.so:${PORTSDIR}/devel/dbus
+LIB_DEPENDS+=	libdbus-1.so:devel/dbus
 CONFIGURE_ARGS+=--with-module=dbus
 .endif
 
 .if ${PORT_OPTIONS:MFASTCGI}
-LIB_DEPENDS+=	libfcgi.so:${PORTSDIR}/www/fcgi
+LIB_DEPENDS+=	libfcgi.so:www/fcgi
 CONFIGURE_ARGS+=--with-module=fastcgi
 .endif
 
 .if ${PORT_OPTIONS:MGDBM}
-LIB_DEPENDS+=	libgdbm.so:${PORTSDIR}/databases/gdbm
+LIB_DEPENDS+=	libgdbm.so:databases/gdbm
 CONFIGURE_ARGS+=--with-module=gdbm
+.endif
+
+.if ${PORT_OPTIONS:MGLIBC}
+USE_LINUX=	base
+CONFIGURE_ARGS+=--with-module=bindings/glibc
 .endif
 
 .if ${PORT_OPTIONS:MGTK2}
@@ -124,19 +142,41 @@ USE_GNOME=	gtk20 libglade2
 CONFIGURE_ARGS+=--with-module=gtk2
 .endif
 
+.if ${PORT_OPTIONS:MJITC}
+BUILD_DEPENDS+=	${LOCALBASE}/include/lightning.h:devel/lightning
+LIB_DEPENDS+=	liblightning.so:devel/lightning
+CONFIGURE_ARGS+=--with-jitc=lightning
+.endif
+
+.if ${PORT_OPTIONS:MMATLAB}
+CONFIGURE_ARGS+=--with-module=matlab
+.endif
+
+.if ${PORT_OPTIONS:MNETICA}
+CONFIGURE_ARGS+=--with-module=netica
+.endif
+
+.if ${PORT_OPTIONS:MORACLE}
+CONFIGURE_ARGS+=--with-module=oracle
+.endif
+
 .if ${PORT_OPTIONS:MPARI}
-LIB_DEPENDS+=	libpari-gmp.so:${PORTSDIR}/math/pari
+LIB_DEPENDS+=	libpari.so:math/pari
 CONFIGURE_ARGS+=--with-module=pari
 .endif
 
 .if ${PORT_OPTIONS:MPCRE}
-LIB_DEPENDS+=	libpcre.so:${PORTSDIR}/devel/pcre
+LIB_DEPENDS+=	libpcre.so:devel/pcre
 CONFIGURE_ARGS+=--with-module=pcre
 .endif
 
 .if ${PORT_OPTIONS:MPGSQL}
-USE_PGSQL=	yes
+USES+=		pgsql
 CONFIGURE_ARGS+=--with-module=postgresql
+.endif
+
+.if ${PORT_OPTIONS:MQUEENS}
+CONFIGURE_ARGS+=--with-module=queens
 .endif
 
 .if ${PORT_OPTIONS:MRAWSOCK}
@@ -144,18 +184,14 @@ CONFIGURE_ARGS+=--with-module=rawsock
 .endif
 
 .if ${PORT_OPTIONS:MSVM}
-RUN_DEPENDS+=	svm-predict:${PORTSDIR}/science/libsvm
+BUILD_DEPENDS+=	${LOCALBASE}/bin/svm-predict:science/libsvm
 CONFIGURE_ARGS+=--with-module=libsvm
 .endif
 
 .if ${PORT_OPTIONS:MTHREADS}
-CONFIGURE_ARGS+=	--with-threads=POSIX_THREADS \
-			LDFLAGS="${PTHREAD_LIBS} ${LDFLAGS}"
-PKGNAMESUFFIX=		-threaded
-.endif
-
-.if ${PORT_OPTIONS:MWILDCARD}
-CONFIGURE_ARGS+=--with-module=wildcard
+CONFIGURE_ARGS+=--with-threads=POSIX_THREADS \
+		LDFLAGS="${PTHREAD_LIBS} ${LDFLAGS}"
+PKGNAMESUFFIX=	-threaded
 .endif
 
 .if ${PORT_OPTIONS:MZLIB}
@@ -165,7 +201,7 @@ CONFIGURE_ARGS+=--with-module=zlib
 post-patch:
 .if ${PORT_OPTIONS:MORACLE}
 	@${REINPLACE_CMD} -e 's|-ldl||; s|-lpthread|-lcompat ${PTHREAD_LIBS}|' \
-		${WRKSRC}/modules/oracle/link.sh
+		${WRKSRC}/modules/oracle/link.sh.in
 .endif
 
 pre-install:
