@@ -12,7 +12,8 @@ LICENSE=	GPLv2
 LICENSE_FILE=	${WRKSRC}/GNU-GPL
 
 BUILD_DEPENDS=	${LOCALBASE}/lib/libavcall.a:devel/libffcall
-LIB_DEPENDS=	libreadline.so:devel/readline \
+LIB_DEPENDS=	libffcall.so:devel/libffcall \
+		libreadline.so:devel/readline \
 		libsigsegv.so:devel/libsigsegv
 
 USE_GCC=	any
