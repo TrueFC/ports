@@ -5,6 +5,11 @@ See end of file for further details.  For commonly done items, please see the
 COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
+
+20190607:
+	Upgrade mail/xepkg-wl to 1.12 (correspond to upgrade wanderust
+	head:6528a0032342ec7bf6a95dda9b60d67292eaadfc).
+
 20190326:
 	Update for ports revision 496871.
 	TAG: 496870 created for ports revision 496871.
