@@ -405,7 +405,7 @@ XEPKG_MULE_DESC=		Install Mule packages(xepkg-mule)
 XEPKG_MISC_DESC=		Install Miscellaneous packages(xepkg-misc)
 XEPKG_LATIN1_RUN_DEPENDS=		xepkg-latin1>=1.0:${PORTSDIR}/editors/xepkg-latin1
 XEPKG_MULE_RUN_DEPENDS=	xepkg-mule>=1.0:${PORTSDIR}/editors/xepkg-mule
-XEPKG_MISC_RUN_DEPENDS=	xepkg-misc>=1.0:${PORTSDIR}/editors/xepkg-misc
+XEPKG_MISC_RUN_DEPENDS=	xepkg-misc>=1.1:${PORTSDIR}/editors/xepkg-misc
 
 #.if defined(PKGNAMEPREFIX)
 #.	if ${PKGNAMEPREFIX} == ja-

@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20190610:
+	Update editors/xepkg-misc to 1.1 and editors/xemacs/Makefile.options.pre
+	according to upgrade mail/xepkg-wl.
+
 20190607:
 	Upgrade mail/xepkg-wl to 1.12 (correspond to upgrade wanderust
 	head:6528a0032342ec7bf6a95dda9b60d67292eaadfc).

@@ -2,7 +2,7 @@
 # $FreeBSD$
 
 PORTNAME=				misc
-PORTVERSION=			1.0
+PORTVERSION=			1.1
 CATEGORIES=				editors xepkgs
 PKGNAMEPREFIX=			xepkg-
 
@@ -350,7 +350,7 @@ PROM_WL_RUN_DEPENDS=	xepkg-prom-wl${PKGNAMESUFFIX}>=1.10:${PORTSDIR}/mail/xepkg-
 SIEVE_RUN_DEPENDS=		xepkg-sieve${PKGNAMESUFFIX}>=1.18:${PORTSDIR}/mail/xepkg-sieve
 SUPERCITE_RUN_DEPENDS=	xepkg-supercite${PKGNAMESUFFIX}>=1.21:${PORTSDIR}/mail/xepkg-supercite
 VM_RUN_DEPENDS=			xepkg-vm${PKGNAMESUFFIX}>=8.08:${PORTSDIR}/mail/xepkg-vm
-WL_RUN_DEPENDS=			xepkg-wl${PKGNAMESUFFIX}>=1.11:${PORTSDIR}/mail/xepkg-wl
+WL_RUN_DEPENDS=			xepkg-wl${PKGNAMESUFFIX}>=1.12:${PORTSDIR}/mail/xepkg-wl
 
 OPTIONS_GROUP+=			MATH
 OPTIONS_GROUP_MATH=		CALC
