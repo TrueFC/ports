@@ -1,4 +1,4 @@
-* XEPkgs の変更個所(revision:496871)
+* XEPkgs の変更個所(revision:510915)
 (1) bsd.default-versions.mk
 1) XEMACS_DEFAULT を追加(138 行あたり)
 
@@ -6,14 +6,14 @@
 XEMACS_DEFAULT?=	basic
 
 (2) bsd.port.mk
-1) VALID_CATEGORIES リストに`xepkgs'を追加(2567 行あたり)
+1) VALID_CATEGORIES リストに`xepkgs'を追加(2551 行あたり)
 
 VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	benchmarks biology cad chinese comms converters databases \
 	deskutils devel docs dns editors elisp emulators enlightenment finance french ftp \
 	games geography german gnome gnustep graphics hamradio haskell hebrew hungarian \
 	ipv6 irc japanese java kde ${_KDE_CATEGORIES_SUPPORTED} kld korean lang linux lisp \
-	mail mate math mbone misc multimedia net net-im net-mgmt net-p2p news \
+	mail mate math mbone misc multimedia net net-im net-mgmt net-p2p net-vpn news \
 	palm parallel pear perl5 plan9 polish portuguese ports-mgmt \
 	print python ruby rubygems russian \
 	scheme science security shells spanish sysutils \
@@ -23,7 +23,7 @@ VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	x11-toolkits x11-wm xepkgs xfce zope base
 
 (3) bsd.site.mk
-1) MASTER_SITE_XEMACS の追加(1181 行あたり)
+1) MASTER_SITE_XEMACS の追加(1176 行あたり)
 MASTER_SITE_XCONTRIB の後に追加(注1)
 
 .if !defined(IGNORE_MASTER_SITE_XEMACS)
@@ -41,7 +41,7 @@ MASTER_SITE_XEMACS+= \
 #	ftp://ftp.yz.yamagata-u.ac.jp/pub/misc/xemacs/%SUBDIR%/
 .endif
 	
-2) MASTER_SITE_XEPKGS の追加(1196 行あたり)
+2) MASTER_SITE_XEPKGS の追加(1191 行あたり)
 MASTER_SITE_XEMACS の後に追加(注1)
 
 .if !defined(IGNORE_MASTER_SITE_XEPKGS)
@@ -59,7 +59,7 @@ MASTER_SITE_XEPKGS+= \
 #	ftp://ftp.yz.yamagata-u.ac.jp/pub/misc/xemacs/packages/%SUBDIR%/
 .endif
 
-3) XEP の追加(1272 行あたり)
+3) XEP の追加(1259 行あたり)
 MASTER_SITES_ABBREVS に XEP:XEPKGS を追加
 
 MASTER_SITES_ABBREVS=	CPAN:PERL_CPAN \

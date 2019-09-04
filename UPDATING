@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20190904:
+	Update for ports revision 510915.
+	TAG: 510915 created for ports revision 510915.
+
 20190610:
 	Update editors/xepkg-misc to 1.1 and editors/xemacs/Makefile.options.pre
 	according to upgrade mail/xepkg-wl.
