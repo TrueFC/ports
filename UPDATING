@@ -6,6 +6,12 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20191010:
+	Update for ports revision 514195.
+	Update sysutils/vm-bhyve-devel to 1.3b (correspond to upgrade vm-bhyve
+	head:c2027a4fd32761a07b2d33cdb16fefd52204b49e).
+	TAG: 514195 created for ports revision 514195.
+
 20190923:
 	Update for ports revision 512607.
 	TAG: 512607 created for ports revision 512607.

@@ -1,87 +1,32 @@
 diff --git a/lib/vm-cmd b/lib/vm-cmd
-index 1abe638..3e85fa9 100644
+index 8001bed..0d05d91 100644
 --- a/lib/vm-cmd
 +++ b/lib/vm-cmd
-@@ -71,7 +71,7 @@ cmd::parse(){
-         startall)  core::startall ;;
+@@ -82,6 +82,7 @@ cmd::parse(){
          stopall)   core::stopall ;;
          console)   core::console "$@" ;;
--        iso)       core::iso "$@" ;;
+         iso)       core::iso "$@" ;;
 +        fetch)     core::iso "$@" ;;
+         img)       core::img "$@" ;;
          configure) core::configure "$@" ;;
          passthru)  core::passthru ;;
-         _run)      vm::run "$@" ;;
-@@ -148,28 +148,3 @@ cmd::parse_image(){
-         *)         util::usage ;;
-     esac
- }
--
--# look for any arguments to the vm command
--# -f = foreground mode:   run vm-bhyve/loader/bhyve in the foreground
--# -i = interactive mode:  if using tmux, don't detach the tmux session
--# -t = tmux mode: internal flag to notify vm-run we are in tmux
--#
--# the argument string without any options is put into 
--# VM_COMMAND for the main command parser to handle
--#
--# @modifies VM_COMMAND VM_OPT_FOREGROUND VM_OPT_INTERACTIVE VM_OPT_TMUX vm_dir
--#
--cmd::parse_args(){
--    local _opt
--
--    while getopts fit _opt; do
--        case ${_opt} in
--            f) VM_OPT_FOREGROUND="1" ;;
--            i) VM_OPT_INTERACTIVE="1" ;;
--            t) VM_OPT_TMUX="1" ;;
--        esac
--    done
--
--    shift $((OPTIND - 1))
--    VM_COMMAND="$@"
--}
 diff --git a/lib/vm-core b/lib/vm-core
-index cd750a0..0d6d5b8 100644
+index e38a995..030364b 100644
 --- a/lib/vm-core
 +++ b/lib/vm-core
-@@ -308,8 +308,9 @@ core::add_network(){
- 
-     # update configuration
-     config::set "${_name}" "network${_num}_type" "${_emulation}"
--    config::set "${_name}" "network${_num}_switch" "${_switch}" "1"
--    [ $? -ne 0 ] && util::err "errors encountered while updating guest configuration"
-+    if ! config::set "${_name}" "network${_num}_switch" "${_switch}" "1"; then
-+	util::err "errors encountered while updating guest configuration"
-+    fi
- }
- 
- # 'vm install'
-@@ -319,15 +320,49 @@ core::add_network(){
- # @param string _iso the iso file in $vm_dir/.iso to use
+@@ -392,6 +392,7 @@ core::add_network(){
  #
  core::install(){
--    local _name="$1"
--    local _iso="$2"
-+    local _name
-+    local _iso
-     local _fulliso
-+    local __force=false _opt _console="" __n _global_run="" __running=false
+     local _name _iso _fulliso
++    local __n __running
  
-+    while getopts f _opt; do
-+        case $_opt in
-+            f) __force=true ;;
-+            *) util::usage ;;
-+        esac
-+    done
-+    shift $((OPTIND - 1))
-+    _name="$1"
-+    _iso="$2"
-     [ -z "${_name}" -o -z "${_iso}" ] && util::usage
- 
+     cmd::parse_args "$@"
+     shift $?
+@@ -403,6 +404,30 @@ core::install(){
      # just run start with an iso
      datastore::iso_find "_fulliso" "${_iso}" || util::err "unable to locate iso file - '${_iso}'"
      core::__start "${_name}" "${_fulliso}"
-+    if $__force; then
++    if [ -n "$VM_OPT_FORCE" ]; then
 +	for __n in 1 1 1 1 1; do
 +	    sleep $__n
 +	    if [ -e "${VM_DS_PATH}/${_name}/console" ]; then
@@ -108,60 +53,13 @@ index cd750a0..0d6d5b8 100644
  }
  
  # 'vm startall'
-@@ -531,15 +566,25 @@ core::poweroff(){
- # @param string _name name of the guest
- #
- core::destroy(){
--    local _name="$1"
-+    local _name _opt __force=false
- 
-+    while getopts f _opt; do
-+        case $_opt in
-+            f) __force=true ;;
-+            *) util::usage ;;
-+        esac
-+    done
-+    shift $((OPTIND - 1))
-+    _name="$1"
-     [ -z "${_name}" ] && util::usage
-     datastore::get_guest "${_name}" || util::err "${_name} doesn't appear to be a valid virtual machine"
- 
-     # make sure it's stopped!
-     vm::confirm_stopped "${_name}" || exit 1
- 
--    util::confirm "Are you sure you want to completely remove this virtual machine" || exit 0
-+    if ! $__force; then
-+        util::confirm "Are you sure you want to completely remove this virtual machine" || exit 0
-+    fi
-     zfs::destroy_dataset "${VM_DS_ZFS_DATASET}/${_name}"
-     [ -e "${VM_DS_PATH}/${_name}" ] && rm -R "${VM_DS_PATH}/${_name}"
- }
-@@ -551,13 +596,34 @@ core::destroy(){
- # @param string _new the new guest name
- #
- core::rename(){
--    local _old="$1"
--    local _new="$2"
-+    local _old
-+    local _new
-+    local _opt __force=false
- 
-+    while getopts f _opt; do
-+        case $_opt in
-+            f) __force=true ;;
-+            *) util::usage ;;
-+        esac
-+    done
-+    shift $((OPTIND - 1))
-+
-+    _old="$1"
-+    _new="$2"
+@@ -763,7 +788,17 @@ core::rename(){
      [ -z "${_old}" -o -z "${_new}" ] && util::usage
-     core::check_name "${_new}" || util::err "invalid virtual machine name - '${_name}'"
+     util::check_name "${_new}" || util::err "invalid virtual machine name - '${_name}'"
  
 -    datastore::get_guest "${_new}" && util::err "directory ${VM_DS_PATH}/${_new} already exists"
 +    if datastore::get_guest "${_new}"; then
-+	if $__force; then
++	if [ -n "$VM_OPT_FORCE" ]; then
 +	    if [ "${VM_DS_ZFS}" = "1" ]; then
 +		zfs::destroy_dataset $VM_DS_ZFS_DATASET/$_new
 +	    else
@@ -174,126 +72,109 @@ index cd750a0..0d6d5b8 100644
      datastore::get_guest "${_old}" || util::err "${_old} doesn't appear to be a valid virtual machine"
  
      # confirm guest stopped
-@@ -573,8 +639,9 @@ core::rename(){
+@@ -779,8 +814,8 @@ core::rename(){
      fi
  
      # rename config file
 -    mv "${VM_DS_PATH}/${_new}/${_old}.conf" "${VM_DS_PATH}/${_new}/${_new}.conf" >/dev/null 2>&1
--    [ $? -ne 0 ] && util::err "changed guest directory but failed to rename configuration file"
-+    if ! mv "${VM_DS_PATH}/${_new}/${_old}.conf" "${VM_DS_PATH}/${_new}/${_new}.conf" >/dev/null 2>&1; then
+-    [ $? -eq 0 ] || util::err "changed guest directory but failed to rename configuration file"
++    mv "${VM_DS_PATH}/${_new}/${_old}.conf" "${VM_DS_PATH}/${_new}/${_new}.conf" >/dev/null 2>&1 || \
 +	util::err "changed guest directory but failed to rename configuration file"
-+    fi
  }
  
  # 'vm console'
-@@ -649,10 +716,23 @@ core::configure(){
- # @param string _url if specified, the url will be fetch'ed into $vm_dir/.iso
+@@ -856,10 +891,12 @@ core::configure(){
  #
  core::iso(){
--    local _url="$1"
-+    local _url __opt __force=false
+     local _url _ds="default"
++    local _opt __force=false __installer_image
  
-+    while getopts f __opt; do
-+        case $__opt in
+-    while getopts d:u _opt ; do
++    while getopts d:fu _opt ; do
+         case $_opt in
+             d) _ds=${OPTARG} ;;
 +            f) __force=true ;;
-+            *) util::usage ;;
-+        esac
-+    done
-+    shift $((OPTIND - 1))
-+   _url="$1"
+             *) util::usage ;;
+         esac
+     done
+@@ -869,7 +906,12 @@ core::iso(){
+ 
      if [ -n "${_url}" ]; then
--        fetch -o "${vm_dir}/.iso" "${_url}"
+         datastore::get_iso "${_ds}" || util::err "unable to locate path for datastore '${_ds}'"
+-        fetch -o "${VM_DS_PATH}" "${_url}"
 +	__installer_image=$(basename $_url)
-+	if ! $__force && [ -f $vm_dir/.iso/$__installer_image ]; then
++	if ! $__force && [ -f $VM_DS_PATH/$__installer_image ]; then
 +	    util::msg "'$__installer_image' already exists"
 +	else
-+	    fetch -o "${vm_dir}/.iso" "${_url}"
++	    fetch -o $VM_DS_PATH "${_url}"
 +	fi
      else
          datastore::iso_list
      fi
 diff --git a/lib/vm-datastore b/lib/vm-datastore
-index f3a61df..72e1f69 100644
+index c10c9e2..d435181 100644
 --- a/lib/vm-datastore
 +++ b/lib/vm-datastore
-@@ -112,8 +112,9 @@ datastore::add(){
+@@ -116,8 +116,7 @@ datastore::add(){
  
      # save
      config::core::set "datastore_list" "${_name}" "1"
 -    config::core::set "path_${_name}" "${_spec}"
--    [ $? -ne 0 ] && util::err "error saving settings to configuration file"
-+    if ! config::core::set "path_${_name}" "${_spec}"; then
-+	util::err "error saving settings to configuration file"
-+    fi
+-    [ $? -eq 0 ] || util::err "error saving settings to configuration file"
++    config::core::set "path_${_name}" "${_spec}" || util::err "error saving settings to configuration file"
  }
  
  # remove a datastore
-@@ -135,8 +136,9 @@ datastore::remove(){
+@@ -139,8 +138,7 @@ datastore::remove(){
      [ -z "${_found}" ] && util::err "unable to locate the specified dataset"
  
      config::core::remove "datastore_list" "${_name}"
 -    config::core::remove "path_${_name}"
--    [ $? -ne 0 ] && util::err "error removing settings from configuration file"
-+    if ! config::core::remove "path_${_name}"; then
-+	util::err "error removing settings from configuration file"
-+    fi
+-    [ $? -eq 0 ] || util::err "error removing settings from configuration file"
++    config::core::remove "path_${_name}" || util::err "error removing settings from configuration file"
  }
  
  # get the filesystem path for the specified dataset spec
-@@ -289,8 +291,9 @@ datastore::iso(){
+@@ -345,8 +343,7 @@ datastore::iso(){
  
      # save
      config::core::set "datastore_list" "${_name}" "1"
 -    config::core::set "path_${_name}" "iso:${_path}"
--    [ $? -ne 0 ] && util::err "error saving settings to configuration file"
-+    if ! config::core::set "path_${_name}" "iso:${_path}"; then
-+	util::err "error saving settings to configuration file"
-+    fi
+-    [ $? -eq 0 ] || util::err "error saving settings to configuration file"
++    config::core::set "path_${_name}" "iso:${_path}" || util::err "error saving settings to configuration file"
  }
  
- # find an iso file by looking in the default location
+ # add a datastore for img files
 diff --git a/lib/vm-run b/lib/vm-run
-index cf219b9..d74cbd8 100644
+index a8fdc27..6ba71e3 100644
 --- a/lib/vm-run
 +++ b/lib/vm-run
-@@ -40,6 +40,7 @@ vm::run(){
-     local _opts _devices _slot=4 _func=0 _taplist _exit _passdev
+@@ -39,6 +39,7 @@ vm::run(){
+     local _opts _devices _slot _install_slot _func=0 _taplist _exit _passdev
      local _com _comports _comstring _logpath="/dev/null" _bootrom _run=1
-     local _ignore_msr _bhyve_options
+     local _ignore_msr _bhyve_options _use_wired _action
 +    local __sufx __emulation
  
-     # try to load datstore details
-     datastore::get_guest "${_name}" || exit 5
-@@ -209,7 +210,19 @@ vm::run(){
- 
-         # set full iso path
-         # use null.iso if not an install and uefi firmware
--        [ -n "${_iso}" ] && _iso_dev="-s 3:0,ahci-cd,${_iso}"
-+	__sufx=${_iso##*.}
-+	case $__sufx in
-+	img)
-+	    __emulation=ahci-hd
-+	    ;;
-+	iso)
-+	    __emulation=ahci-cd
-+	    ;;
-+	*)
-+	    __emulation=ahci
-+	    ;;
-+	esac
-+        [ -n "${_iso}" ] && _iso_dev="-s 3:0,$__emulation,${_iso}"
-         [ -z "${_iso}" -a -n "${_uefi}" -a "${_uefi}" != "csm" ] && \
-             _iso_dev="-s 3:0,ahci-cd,${vm_dir}/.config/null.iso"
+     cmd::parse_args "$@"
+     shift $?
+@@ -233,7 +234,7 @@ vm::run(){
+             if echo "${_iso}" | grep -iqs '.iso$'; then
+                 _iso_dev="-s ${_install_slot}:0,ahci-cd,${_iso},ro"
+             else
+-                _iso_dev="-s ${_install_slot}:0,ahci-hd,${_iso},ro"
++                _iso_dev="-s ${_install_slot}:0,ahci-hd,${_iso}"
+             fi
+         fi
  
 diff --git a/lib/vm-switch-standard b/lib/vm-switch-standard
-index 10f4188..dc44890 100644
+index 69afc25..02110d7 100644
 --- a/lib/vm-switch-standard
 +++ b/lib/vm-switch-standard
-@@ -247,16 +247,22 @@ switch::standard::__configure_port(){
-         # create if needed
-         if [ -z "${_vid}" ]; then
-             _vid=$(ifconfig vlan create vlandev "${_port}" vlan "${_vlan}" description "vm-vlan-${_port}-${_vlan}" up)
--            [ $? -ne 0 ] && util::err "failed to create vlan interface for port ${_port} on switch ${_switch}"
+@@ -294,17 +294,21 @@ switch::standard::__configure_port(){
+             # it should always be a valid name and interface.vlan-id is much easier to understand in ifconfig
+             # than a bunch of vlanX interfaces
+             _viface=$(ifconfig vlan create vlandev "${_port}" vlan "${_vlan}" descr "vm-vlan-${_switch}-${_vname}" name "${_vname}" group vm-vlan up 2>/dev/null)
+-            [ $? -eq 0 ] || util::err "failed to create vlan interface for port ${_port} on switch ${_switch}"
 +            if [ $? -ne 0 ]; then
 +		util::err "failed to create vlan interface for port ${_port} on switch ${_switch}"
 +	    else
@@ -301,122 +182,84 @@ index 10f4188..dc44890 100644
 +	    fi
          fi
  
--        ifconfig ${_id} addm ${_vid} >/dev/null 2>&1
-+        if ! ifconfig ${_id} addm ${_vid} >/dev/null 2>&1; then
+         switch::set_viid "${_vname}" "${_viface}"
+-        ifconfig ${_id} addm ${_viface} >/dev/null 2>&1
++        ifconfig ${_id} addm ${_vid} >/dev/null 2>&1 || \
 +	    util::err "failed to add member ${_vid} to the virtual switch ${_switch}"
-+	fi
      else
          # add to bridge, nice and simple :)
 -        ifconfig ${_id} addm ${_port} >/dev/null 2>&1
-+        if ! ifconfig ${_id} addm ${_port} >/dev/null 2>&1; then
++        ifconfig ${_id} addm ${_port} >/dev/null 2>&1 || \
 +	    util::err "failed to add member ${_port} to the virtual switch ${_switch}"
-+	fi
      fi
 -
--    [ $? -ne 0 ] && util::err "failed to add member ${_port} to the virtual switch ${_switch}"
+-    [ $? -eq 0 ] || util::err "failed to add member ${_port} to the virtual switch ${_switch}"
  }
  
  # unconfigure a local port
 diff --git a/lib/vm-switch-vxlan b/lib/vm-switch-vxlan
-index d83d379..ae77c9c 100644
+index 6045ef9..29fc208 100644
 --- a/lib/vm-switch-vxlan
 +++ b/lib/vm-switch-vxlan
-@@ -125,8 +125,9 @@ switch::vxlan::remove(){
+@@ -132,8 +132,7 @@ switch::vxlan::remove(){
      route del -net "${_maddr}/32" >/dev/null 2>&1
  
      # destroy the guest bridge
 -    ifconfig ${_id} destroy >/dev/null 2>&1
--    [ $? -ne 0 ] && return 1
-+    if ! ifconfig ${_id} destroy >/dev/null 2>&1; then
-+	return 1
-+    fi
+-    [ $? -eq 0 ] || return 1
++    ifconfig ${_id} destroy >/dev/null 2>&1 || return 1
  
      # destroy the vxlan
      ifconfig "vxlan${_vlan}" destroy >/dev/null 2>&1
 diff --git a/lib/vm-util b/lib/vm-util
-index bd9f9b3..f8c3a69 100644
+index ab10e31..9c27f15 100644
 --- a/lib/vm-util
 +++ b/lib/vm-util
-@@ -41,10 +41,10 @@ util::setup(){
+@@ -52,10 +52,8 @@ util::setup(){
  #
  util::load_module(){
      local _mod="$1"
 -    kldstat -qm ${_mod} >/dev/null 2>&1
 -    if [ $? -ne 0 ]; then
 -        kldload ${_mod} >/dev/null 2>&1
--        [ $? -ne 0 ] && util::err "unable to load ${_mod}.ko!"
+-        [ $? -eq 0 ] || util::err "unable to load ${_mod}.ko!"
 +    if ! kldstat -qm ${_mod} >/dev/null 2>&1; then
-+        if ! kldload ${_mod} >/dev/null 2>&1; then
-+	    util::err "unable to load ${_mod}.ko!"
-+	fi
++        kldload ${_mod} >/dev/null 2>&1 || util::err "unable to load ${_mod}.ko!"
      fi
  }
  
-@@ -116,11 +116,13 @@ util::restart_service(){
+@@ -124,11 +122,9 @@ util::restart_service(){
      local _cmd="restart"
  
      # see if it's actually running
 -    service ${_serv} status >/dev/null 2>&1
 -    [ $? -ne 0 ] && _cmd="start"
-+    if ! service ${_serv} status >/dev/null 2>&1; then
-+	_cmd="start"
-+    fi
++    ! service ${_serv} status >/dev/null 2>&1 && _cmd="start"
  
 -    service ${_serv} ${_cmd} >/dev/null 2>&1
 -    [ $? -ne 0 ] && util::warn "failed to ${_cmd} service ${_serv}"
-+    if ! service ${_serv} ${_cmd} >/dev/null 2>&1; then
-+	util::warn "failed to ${_cmd} service ${_serv}"
-+    fi
++    ! service ${_serv} ${_cmd} >/dev/null 2>&1 && util::warn "failed to ${_cmd} service ${_serv}"
  }
  
  # show version
-@@ -156,7 +158,7 @@ Usage: vm ...
-     list
-     info [name] [...]
-     create [-d datastore] [-t template] [-s size] <name>
--    [-fi] install <name> <iso>
-+    [-fi] install [-f] <name> <iso>
-     [-fi] start <name> [...]
-     stop <name> [...]
-     console <name> [com1|com2]
-@@ -210,6 +212,15 @@ util::warn(){
-     echo "${0}: WARNING: $1" >&2
- }
- 
-+# msg
-+# display message, but do not exit
-+#
-+# @param string - the message to display
-+#
-+util::msg(){
-+    echo "${0}: $1" >&2
-+}
-+
- # log_rotate
- # simple rotation of log files
- # if we hit 1MB, which should cover a fair amount of history,
-@@ -306,15 +317,27 @@ util::log_and_write(){
+@@ -319,15 +315,22 @@ util::log_and_write(){
  # @return int success if confirmed
  #
  util::confirm(){
 -    local _msg="$1"
--    local _resp
 +    local _msg
-+    local _resp __force_yes=false
+     local _resp
  
 -    while read -p "${_msg} (y/n)? " _resp; do
 -        case "${_resp}" in
 -            y*) return 0 ;;
 -            n*) return 1 ;;
-+    while getopts y _opt; do
-+        case $_opt in
-+            y) __force_yes=true ;;
-+            *) util::usage ;;
-         esac
-     done
-+    shift $((OPTIND - 1))
+-        esac
+-    done
++    cmd::parse_args "$@"
++    shift $?
 +    _msg="$1"
-+    if $__force_yes; then
++    if [ -n "$VM_OPT_FORCE" ]; then
 +        echo "${_msg} (y/n)? y"
 +    else
 +        while read -p "${_msg} (y/n)? " _resp; do
@@ -430,205 +273,218 @@ index bd9f9b3..f8c3a69 100644
  
  # our own checkyesno copy
 diff --git a/lib/vm-zfs b/lib/vm-zfs
-index 44f1485..49a5acf 100644
+index e4dd2ca..82b4867 100644
 --- a/lib/vm-zfs
 +++ b/lib/vm-zfs
-@@ -73,8 +73,9 @@ zfs::make_dataset(){
+@@ -73,8 +73,7 @@ zfs::make_dataset(){
  
      if [ -n "${_name}" -a "${VM_DS_ZFS}" = "1" ]; then
          zfs::__format_options "_opts" "${_opts}"
 -        zfs create ${_opts} "${_name}"
--        [ $? -ne 0 ] && util::err "failed to create new ZFS dataset ${_name}"
-+        if ! zfs create ${_opts} "${_name}"; then
-+	    util::err "failed to create new ZFS dataset ${_name}"
-+	fi
+-        [ $? -eq 0 ] || util::err "failed to create new ZFS dataset ${_name}"
++        zfs create ${_opts} "${_name}" || util::err "failed to create new ZFS dataset ${_name}"
      fi
  }
  
-@@ -86,8 +87,9 @@ zfs::destroy_dataset(){
+@@ -86,8 +85,7 @@ zfs::destroy_dataset(){
      local _name="$1"
  
      if [ -n "${_name}" -a "${VM_DS_ZFS}" = "1" ]; then
 -        zfs destroy -rf "${_name}" >/dev/null 2>&1
--        [ $? -ne 0 ] && util::err "failed to destroy ZFS dataset ${_name}"
-+        if ! zfs destroy -Rrf "${_name}" >/dev/null 2>&1; then
-+	    util::err "failed to destroy ZFS dataset ${_name}"
-+	fi
+-        [ $? -eq 0 ] || util::err "failed to destroy ZFS dataset ${_name}"
++        zfs destroy -Rrf "${_name}" >/dev/null 2>&1 || util::err "failed to destroy ZFS dataset ${_name}"
      fi
  }
  
-@@ -103,8 +105,9 @@ zfs::rename_dataset(){
+@@ -103,8 +101,8 @@ zfs::rename_dataset(){
      local _new="$2"
  
      if [ -n "${_old}" -a -n "${_new}" -a "${VM_DS_ZFS}" = "1" ]; then
 -        zfs rename "${VM_DS_ZFS_DATASET}/${_old}" "${VM_DS_ZFS_DATASET}/${_new}" >/dev/null 2>&1
--        [ $? -ne 0 ] && util::err "failed to rename ZFS dataset ${VM_DS_ZFS_DATASET}/${_old}"
-+        if ! zfs rename "${VM_DS_ZFS_DATASET}/${_old}" "${VM_DS_ZFS_DATASET}/${_new}" >/dev/null 2>&1; then
-+	    util::err "failed to rename ZFS dataset ${VM_DS_ZFS_DATASET}/${_old}"
-+	fi
+-        [ $? -eq 0 ] || util::err "failed to rename ZFS dataset ${VM_DS_ZFS_DATASET}/${_old}"
++        zfs rename "${VM_DS_ZFS_DATASET}/${_old}" "${VM_DS_ZFS_DATASET}/${_new}" >/dev/null 2>&1 \
++	    || util::err "failed to rename ZFS dataset ${VM_DS_ZFS_DATASET}/${_old}"
      fi
  }
  
-@@ -125,8 +128,9 @@ zfs::make_zvol(){
+@@ -125,8 +123,7 @@ zfs::make_zvol(){
      [ "${_sparse}" = "1" ] && _opt="-sV"
  
      zfs::__format_options "_user_opts" "${_user_opts}"
 -    zfs create ${_opt} ${_size} -o volmode=dev ${_user_opts} "${_name}"
--    [ $? -ne 0 ] && util::err "failed to create new ZVOL ${_name}"
-+    if ! zfs create ${_opt} ${_size} -o volmode=dev ${_user_opts} "${_name}"; then
-+	util::err "failed to create new ZVOL ${_name}"
-+    fi
+-    [ $? -eq 0 ] || util::err "failed to create new ZVOL ${_name}"
++    zfs create ${_opt} ${_size} -o volmode=dev ${_user_opts} "${_name}" || util::err "failed to create new ZVOL ${_name}"
  }
  
  # format options for zfs commands
-@@ -158,11 +162,12 @@ zfs::__format_options(){
- # @param string _name the name of the guest to snapshot
+@@ -159,9 +156,16 @@ zfs::__format_options(){
  #
  zfs::snapshot(){
--    local _name _snap _opt _force _snap_exists
-+    local _name _snap _opt _force _snap_exists __replace=false
- 
--    while getopts f _opt; do
+     local _name _snap
+-
+-    cmd::parse_args "$@"
+-    shift $?
++    local __opt __force __replace=false
++
 +    while getopts fr _opt; do
-         case $_opt in
-             f) _force=1 ;;
-+            r) __replace=true ;;
-             *) util::usage ;;
-         esac
-     done
-@@ -188,8 +193,14 @@ zfs::snapshot(){
-         [ -z "${_force}" ] && util::err "${_name} must be powered off first (use -f to override)"
++         case $__opt in
++             f) __force=true ;;
++             r) __replace=true ;;
++             *) util::usage ;;
++         esac
++     done
++    shift $((OPTIND - 1))
+     _name="$1"
+ 
+     # try to get snapshot name
+@@ -182,8 +186,12 @@ zfs::snapshot(){
+         [ -z "${VM_OPT_FORCE}" ] && util::err "${_name} must be powered off first (use -f to override)"
      fi
  
 -    zfs snapshot -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
--    [ $? -ne 0 ] && util::err "failed to create recursive snapshot of virtual machine"
+-    [ $? -eq 0 ] || util::err "failed to create recursive snapshot of virtual machine"
 +    if $__replace; then
-+	if zfs list -tsnapshot ${VM_DS_ZFS_DATASET}/${_name}@${_snap} > /dev/null 2>&1; then
++	zfs list -tsnapshot ${VM_DS_ZFS_DATASET}/${_name}@${_snap} > /dev/null 2>&1 && \
 +            zfs destroy ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
-+	fi
 +    fi
-+    if ! zfs snapshot -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}; then
-+        util::err "failed to create recursive snapshot of virtual machine"
-+    fi
++    zfs snapshot -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap} || \
++	util::err "failed to create recursive snapshot of virtual machine"
  }
  
- # 'vm rollback'
-@@ -230,8 +241,9 @@ zfs::rollback(){
+ # try to remove a snapshot
+@@ -246,8 +254,7 @@ zfs::rollback(){
      # list all datasets and zvols under guest
      zfs list -o name -rHt filesystem,volume ${VM_DS_ZFS_DATASET}/${_name} | \
      while read _fs; do
 -        zfs rollback ${_force} ${_fs}@${_snap}
 -        [ $? -ne 0 ] && exit $?
-+        if ! zfs rollback ${_force} ${_fs}@${_snap}; then
-+	    exit $?
-+	fi
++        zfs rollback ${_force} ${_fs}@${_snap} || exit $?
      done
  }
  
-@@ -345,36 +357,58 @@ zfs::image_create(){
+@@ -352,45 +359,63 @@ zfs::image_create(){
      [ -z "${_desc}" ] && _desc="No description provided"
  
      datastore::get_guest "${_name}" || util::err "${_name} does not appear to be a valid virtual machine"
 -    [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ] && util::err "this command is only supported on zfs datastores"
-+    if [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ]; then
- 
+-
 -    # create the image dataset if we don't have it
 -    if [ ! -e "${vm_dir}/images" ]; then
 -        zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
--        [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
+-        [ $? -eq 0 ] || util::err "failed to create image store ${VM_ZFS_DATASET}/images"
 -    fi
+-
+-    # try to snapshot
+-    zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
+-    [ $? -eq 0 ] || util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
+-
+-    # copy source
+-    if [ -n "${_no_compress}" ]; then
+-        _filename="${_uuid}.zfs"
+-
+-        echo "Creating guest image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
++    if [ -z "${VM_ZFS}" -o -z "${VM_DS_ZFS}" ]; then
 +        # create the image dataset if we don't have it
 +        if [ ! -e "${vm_dir}/images" ]; then
 +            mkdir -p ${vm_dir}/images >/dev/null 2>&1
 +            [ $? -ne 0 ] && util::err "failed to create image store ${vm_dir}/images"
 +        fi
-+
 +        # copy source
 +        if [ -n "${_no_compress}" ]; then
 +            _filename="${_uuid}.tar"
- 
--    # try to snapshot
--    zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
--    [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
++
 +            echo "Creating guest image, this may take some time..."
 +            tar -cf ${vm_dir}/images/${_filename} -C ${vm_dir}/${_name} .
 +        else
 +            _filename="${_uuid}.tar.xz"
- 
--    # copy source
--    if [ -n "${_no_compress}" ]; then
--        _filename="${_uuid}.zfs"
 +            echo "Creating a compressed image, this may take some time..."
 +            tar -cf - -C ${vm_dir}/${_name} . | xz -T0 > ${vm_dir}/images/${_filename}
 +        fi
- 
--        echo "Creating guest image, this may take some time..."
--        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
 +        [ $? -ne 0 ] && exit 1
      else
--        _filename="${_uuid}.zfs.xz"
- 
--        echo "Creating a compressed image, this may take some time..."
--        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
--    fi
+-        _filename="${_uuid}.zfs.z"
+-
+-        config::core::get "_compress" "compress"
+-        config::core::get "_decompress" "decompress"
+-
+-        # use defaults if either of these settings are missing
+-        # no point using user defined compress if we don't know how to decompress
+-        if [ "${_compress}" = "" -o "${_decompress}" = "" ]; then
+-            _compress="xz -T0"
+-            _decompress="xz -d"
 +        # create the image dataset if we don't have it
 +        if [ ! -e "${vm_dir}/images" ]; then
-+            zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1
-+            [ $? -ne 0 ] && util::err "failed to create image store ${VM_ZFS_DATASET}/images"
-+        fi
++            zfs create "${VM_ZFS_DATASET}/images" >/dev/null 2>&1 || \
++		util::err "failed to create image store ${VM_ZFS_DATASET}/images"
+         fi
  
--    [ $? -ne 0 ] && exit 1
+-        echo "Creating a compressed image, this may take some time..."
+-        zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | ${_compress} > "${vm_dir}/images/${_filename}"
+-    fi
 +        # try to snapshot
-+        zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1
-+        [ $? -ne 0 ] && util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
- 
--    # done with the source snapshot
--    zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
++        zfs snapshot -r "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" >/dev/null 2>&1 || \
++	    util::err "failed to create snapshot of source dataset ${VM_DS_ZFS_DATASET}/${_name}@${_snap}"
++
 +        # copy source
 +        if [ -n "${_no_compress}" ]; then
 +            _filename="${_uuid}.zfs"
- 
++    
 +            echo "Creating guest image, this may take some time..."
 +            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" > "${vm_dir}/images/${_filename}"
 +        else
-+            _filename="${_uuid}.zfs.xz"
-+
++            _filename="${_uuid}.zfs.z"
++    
++            config::core::get "_compress" "compress"
++            config::core::get "_decompress" "decompress"
++    
++            # use defaults if either of these settings are missing
++            # no point using user defined compress if we don't know how to decompress
++            if [ "${_compress}" = "" -o "${_decompress}" = "" ]; then
++                _compress="xz -T0"
++                _decompress="xz -d"
++            fi
++    
 +            echo "Creating a compressed image, this may take some time..."
-+            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | xz -T0 > "${vm_dir}/images/${_filename}"
++            zfs send -R "${VM_DS_ZFS_DATASET}/${_name}@${_snap}" | ${_compress} > "${vm_dir}/images/${_filename}"
 +        fi
-+
+ 
+-    [ $? -ne 0 ] && exit 1
 +        [ $? -ne 0 ] && exit 1
-+
+ 
+-    # done with the source snapshot
+-    zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
 +        # done with the source snapshot
 +        zfs destroy -r ${VM_DS_ZFS_DATASET}/${_name}@${_snap}
 +    fi
+ 
      # create a description file
      sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" "description=${_desc}" >/dev/null 2>&1
-     sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" "created=${_date}" >/dev/null 2>&1
-@@ -425,16 +459,30 @@ zfs::image_provision(){
+@@ -443,8 +468,20 @@ zfs::image_provision(){
  
      # check format of image
      case ${_type} in
 +        tar) mkdir -p ${vm_dir}/${_name}; tar -xpf ${vm_dir}/images/${_file} -C ${vm_dir}/${_name} ;;
          zfs) cat "${vm_dir}/images/${_file}" | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
--        xz)  cat "${vm_dir}/images/${_file}" | xz -d | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
+-        xz)  xz -dc "${vm_dir}/images/${_file}" 2>/dev/null | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
 +        xz)
 +            _type=${_file%.$_type}
 +            case ${_type##*.} in
 +            tar)
 +		mkdir -p ${vm_dir}/${_name}
-+                cat ${vm_dir}/images/${_file} | xz -d | tar -xpf - -C ${vm_dir}/${_name}
++                xz -dc "${vm_dir}/images/${_file}" 2>/dev/null | tar -xpf - -C ${vm_dir}/${_name}
 +		;;
 +            zfs)
-+                cat "${vm_dir}/images/${_file}" | xz -d | zfs recv "${VM_DS_ZFS_DATASET}/${_name}"
++                 xz -dc "${vm_dir}/images/${_file}" 2>/dev/null | zfs recv "${VM_DS_ZFS_DATASET}/${_name}"
 +		;;
 +	    esac
 +	    ;;
-         *)   util::err "unsupported guest image type - '${_type}'" ;;
-     esac
- 
+         z)   _decompress=$(sysrc -inqf "${vm_dir}/images/${_uuid}.manifest" decompress)
+              [ -z "${_decompress}" ] && util::err "unable to locate decompression configuration"
+              ${_decompress} "${vm_dir}/images/${_file}" 2>/dev/null | zfs recv "${VM_DS_ZFS_DATASET}/${_name}" ;;
+@@ -454,8 +491,10 @@ zfs::image_provision(){
      # error unpacking?
-     [ $? -ne 0 ] && util::err "errors occured while trying to unpackage the image file"
+     [ $? -eq 0 ] || util::err "errors occured while trying to unpackage the image file"
  
 -    # remove the original snapshot
 -    zfs destroy -r "${VM_DS_ZFS_DATASET}/${_name}@${_uuid%%-*}" >/dev/null 2>&1
@@ -639,62 +495,22 @@ index 44f1485..49a5acf 100644
  
      # rename the guest configuration file
      mv "${VM_DS_PATH}/${_name}/${_oldname}.conf" "${VM_DS_PATH}/${_name}/${_name}.conf" >/dev/null 2>&1
-diff --git a/vm b/vm
-index 11568dc..8388ee2 100644
---- a/vm
-+++ b/vm
-@@ -61,7 +61,7 @@ fi
- . "${LIB}/vm-zfs"
- 
- # check informational commands
--cmd::parse_info $@
-+cmd::parse_info "$@"
- 
- # we should be enabled in rc.conf
- # or call it using forcestart
-@@ -84,6 +84,24 @@ zfs::init
- config::core::load
- datastore::load
- 
-+# look for any arguments to the vm command
-+# -f = foreground mode:   run vm-bhyve/loader/bhyve in the foreground
-+# -i = interactive mode:  if using tmux, don't detach the tmux session
-+# -t = tmux mode: internal flag to notify vm-run we are in tmux
-+#
-+# the argument string without any options is put into 
-+#
-+# VM_COMMAND for the main command parser to handle
-+# @modifies VM_COMMAND VM_OPT_FOREGROUND VM_OPT_INTERACTIVE VM_OPT_TMUX vm_dir
-+#
-+while getopts fit opt; do
-+    case ${opt} in
-+        f) VM_OPT_FOREGROUND="1" ;;
-+        i) VM_OPT_INTERACTIVE="1" ;;
-+        t) VM_OPT_TMUX="1" ;;
-+    esac
-+done
-+shift $((OPTIND - 1))
-+
- # run the requested command
--cmd::parse_args $@
--cmd::parse ${VM_COMMAND}
-+cmd::parse "$@"
 diff --git a/vm.8 b/vm.8
-index 4540f65..388c23e 100644
+index 7e71388..2db8c15 100644
 --- a/vm.8
 +++ b/vm.8
-@@ -86,7 +86,8 @@
+@@ -90,7 +90,8 @@
  .Nm
- .Op Fl fi
  .Cm install
+ .Op Fl fi
 -.Ar name iso
 +.Op Fl f
 +.Ar name img
  .Nm
- .Op Fl fi
  .Cm start
-@@ -150,7 +151,7 @@
- .Ar name
+ .Op Fl fi
+@@ -149,7 +150,7 @@
+ .Ar name@snapshot
  .Pp
  .Nm
 -.Cm iso
@@ -702,7 +518,7 @@ index 4540f65..388c23e 100644
  .Op Ar url
  .Pp
  .Nm
-@@ -264,9 +265,9 @@ as required.
+@@ -276,9 +277,9 @@ as required.
  # vm switch add public em0
  .Ed
  .Pp
@@ -713,96 +529,97 @@ index 4540f65..388c23e 100644
 +# vm fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.1/FreeBSD-10.1-RELEASE-amd64-disc1.iso
  .Ed
  .Pp
- Create a new guest using the default template and disk size, then start the installation. The
-@@ -301,8 +302,8 @@ port, or you can manually download a copy (see URL below) to
- .Pp
- If you are running FreeBSD 10, there is no VGA console in
+ Create a new guest using the default template and disk size, then start the
+@@ -324,8 +325,8 @@ If you are running
+ .Fx 10
+ , there is no VGA console in
  .Xr bhyve 8 ,
 -and so an unattended installation ISO is required which allows Windows to install and
--boot without any user interaction. Instructions for creating a suitable ISO can
+-boot without any user interaction.
 +and so an unattended installer image is required which allows Windows to install and
 +boot without any user interaction. Instructions for creating a suitable installer image can
- be found at the URL below.
+ Instructions for creating a suitable ISO can be found at the URL below.
  .Pp
- .Pp
-@@ -314,9 +315,10 @@ can be seen in
- output. See the configuration format documentation below for more detailed information on configuring graphics.
- If network drivers are required, I recommend re-running the 
+ On
+@@ -340,10 +341,10 @@ See the configuration format documentation below for more detailed information
+ on configuring graphics.
+ If network drivers are required, I recommend re-running the
  .Sy vm install
--command once the guest has been installed, but providing an ISO of the virtio-net drivers instead.
+-command once the guest has been installed, but providing an ISO of the
+-virtio-net drivers instead.
 +command once the guest has been installed, but providing an installer image
 +of the virtio-net drivers instead.
  .Pp
 -Once the installation ISO is ready, has been placed in the
 +Once the installation installer image is ready, has been placed in the
  .Pa $vm_dir/.iso
- directory, and you have the UEFI firmware, installation can be performed as normal.
- .Bd -literal -offset indent
-@@ -337,7 +339,7 @@ to see the IP address that has been assigned. The default unattended installatio
- should make RDP available, using Administrator and Test123 as the default login details.
+ directory, and you have the UEFI firmware, installation can be performed as
+ normal.
+@@ -369,7 +370,7 @@ Administrator and Test123 as the default login details.
  .Pp
- A pre-compiled copy of the UEFI firmware (BHYVE_UEFI_20160526.fd), as well as instructions for creating an
+ A pre-compiled copy of the UEFI firmware (BHYVE_UEFI_20160526.fd), as well as
+ instructions for creating an
 -unattended installation ISO can currently be obtained from
 +unattended installer image can currently be obtained from
- .Pa https://people.freebsd.org/~grehan/bhyve_uefi/
- .\" ============ GLOBAL OPTIONS =============
- .Sh GLOBAL OPTIONS
-@@ -579,9 +581,9 @@ create it.
- Remove the specified datastore from the list. This does not destroy the directory
- or dataset, leaving all files intact.
+ .Lk https://people.freebsd.org/~grehan/bhyve_uefi/
+ .\" ============ SUBCOMMANDS =============
+ .Sh SUBCOMMANDS
+@@ -591,10 +592,9 @@ We do not try to create it.
+ Remove the specified datastore from the list.
+ This does not destroy the directory or dataset, leaving all files intact.
  .It Cm datastore iso Ar name path
--Adds a new datastore location for storing iso files. Guests cannot be created in an
--iso store, but this provides an easy way to configure vm-bhyve to look in any arbitrary
--location on your system (or mounted network share) where you may want to store iso images.
+-Adds a new datastore location for storing iso files.
+-Guests cannot be created in an iso store, but this provides an easy way to
+-configure vm-bhyve to look in any arbitrary location on your system (or mounted
+-network share) where you may want to store iso images.
 +Adds a new datastore location for storing installer image files. Guests cannot be created in an
 +installer image store, but this provides an easy way to configure vm-bhyve to look in any arbitrary
 +location on your system (or mounted network share) where you may want to store installer images.
  .It Xo
  .Cm create
  .Op Fl d Ar datastore
-@@ -632,16 +634,20 @@ is running, the output also shows the amount of host memory currently in use,
- and additional network details including bytes sent/received for each virtual interface.
+@@ -651,18 +651,18 @@ for each virtual interface.
  .It Xo
+ .Cm install 
  .Op Fl fi
--.Cm install Ar name Ar iso
-+.Cm install
-+.Op Fl f
-+.Ar name
-+.Ar img
+-.Ar name Ar iso
++.Ar name Ar img
  .Xc
--Start a guest installation for the named virtual machine, using the specified ISO file.
+-Start a guest installation for the named virtual machine, using the specified
+-ISO file or install disk image.
 +Start a guest installation for the named virtual machine, using the
 +specified installer image file.
  The
 -.Ar iso
--argument should be the filename of an ISO file already downloaded into the
+-argument should be the filename of an ISO or image file already downloaded into the
 +.Ar img
 +argument should be the filename of an installer image file already downloaded into the
  .Pa $vm_dir/.iso
- directory (or any media datastore), a full path, or a file in the current directory.
+ directory (or any media datastore), a full path, or a file in the current
+ directory.
 -ISO files in the default .iso store can be downloaded using the
 -.Ar iso
 +installer image files in the default .iso store can be downloaded using the
 +.Ar fetch
  subcommand described below.
  .Pp
- By default the installation is started in the background. Use the 
-@@ -649,8 +655,9 @@ By default the installation is started in the background. Use the
- command to connect and begin the installation.
+ By default the installation is started in the background.
+@@ -672,9 +672,9 @@ command to connect and begin the installation.
  .Pp
- After installation, the guest can be rebooted and will restart using its own disk image to boot.
--At this point the installation ISO file is still attached, allowing you to use the CD/DVD image
--for any post installation tasks. The ISO file will remain attached after each reboot until the
-+At this point the installer image file is still attached, allowing you to use the CD/DVD image
-+for any post installation tasks. The installer image file will remain
-+attached after each reboot until the
- guest is fully stopped.
+ After installation, the guest can be rebooted and will restart using its own
+ disk image to boot.
+-At this point the installation ISO file is still attached, allowing you to use
++At this point the installer image file is still attached, allowing you to use
+ the CD/DVD image for any post installation tasks.
+-The ISO file will remain attached after each reboot until the guest is fully
++The installer image file will remain attached after each reboot until the guest is fully
+ stopped.
  .Pp
  If the
-@@ -661,6 +668,15 @@ option starts the guest in interactive mode. This requires tmux, and the global
- .Sy console
- setting must be set likewise. In interactive mode the guest is started on a foreground
- tmux session, but this can be detached using the standard tmux commands.
+@@ -688,6 +688,15 @@ This requires tmux, and the global
+ setting must be set likewise.
+ In interactive mode the guest is started on a foreground tmux session, but this
+ can be detached using the standard tmux commands.
 +.Pp
 +Normally installation would be interactively done, but when work with batch
 +mode by using
@@ -813,21 +630,22 @@ index 4540f65..388c23e 100644
 +.Fl f
 +option.
  .It Xo
+ .Cm start
  .Op Fl fi
- .Cm start Ar name Ar ...
-@@ -918,24 +934,23 @@ Run the receiver in triple stage mode which expects three snapshots. See the
- command above for details on this mode.
- .El
- .Xc
+@@ -916,16 +925,16 @@ option can be passed directly into
+ .Cm rollback
+ .Pp
+ The guest must always be stopped to use this command.
 -.It Cm iso Op Ar url
 -List all the ISO files currently stored in the
 +.It Cm fetch Op Ar url
 +List all the installer image files currently stored in the
  .Pa $vm_dir/.iso
--directory. This is often useful during guest installation, allowing you to copy and paste the ISO
+-directory.
+-This is often useful during guest installation, allowing you to copy and paste
+-the ISO filename.
 +directory. This is often useful during guest installation, allowing you to
 +copy and paste the installer image
- filename.
  .Pp
  If a
  .Sy url
@@ -836,13 +654,15 @@ index 4540f65..388c23e 100644
 +download the given file using
  .Xr fetch 1 .
  .It Cm image list
- List available images. Any virtual machine can be packaged into an image, which can then be
- used to create additional machines. All images have a globally unique ID (UUID) which is 
- used to identify them. The list command shows the UUID, the original machine name, the
- date it was created and a short description of the image.
+ List available images.
+@@ -934,10 +943,6 @@ create additional machines.
+ All images have a globally unique ID (UUID) which is used to identify them.
+ The list command shows the UUID, the original machine name, the date it was
+ created and a short description of the image.
 -.Pp
--Please note that these commands rely on using ZFS featured to package/unpackage the images,
--and as such are only available when using a ZFS dataset as the storage location.
+-Please note that these commands rely on using ZFS features to package/unpackage
+-the images, and as such are only available when using a ZFS dataset as the
+-storage location.
  .It Xo
  .Cm image create
  .Op Fl d Ar description
