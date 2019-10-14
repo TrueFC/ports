@@ -6,6 +6,9 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20191014:
+	Correct sysutils/vm-bhyve-devel/pkg-plist.
+
 20191010:
 	Update for ports revision 514195.
 	Update sysutils/vm-bhyve-devel to 1.3b (correspond to upgrade vm-bhyve
