@@ -1,4 +1,4 @@
-* XEPkgs の変更個所(revision:514195)
+* XEPkgs の変更個所(revision:523699)
 (1) bsd.default-versions.mk
 1) XEMACS_DEFAULT を追加(140 行あたり)
 
@@ -6,7 +6,7 @@
 XEMACS_DEFAULT?=	basic
 
 (2) bsd.port.mk
-1) VALID_CATEGORIES リストに`xepkgs'を追加(2575 行あたり)
+1) VALID_CATEGORIES リストに`xepkgs'を追加(2592 行あたり)
 
 VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	benchmarks biology cad chinese comms converters databases \
@@ -14,7 +14,7 @@ VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	games geography german gnome gnustep graphics hamradio haskell hebrew hungarian \
 	irc japanese java kde ${_KDE_CATEGORIES_SUPPORTED} kld korean lang linux lisp \
 	mail mate math mbone misc multimedia net net-im net-mgmt net-p2p net-vpn news \
-	palm parallel pear perl5 plan9 polish portuguese ports-mgmt \
+	parallel pear perl5 plan9 polish portuguese ports-mgmt \
 	print python ruby rubygems russian \
 	scheme science security shells spanish sysutils \
 	tcl textproc tk \
