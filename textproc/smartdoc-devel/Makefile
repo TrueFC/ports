@@ -7,6 +7,7 @@
 
 PORTNAME=	smartdoc
 PORTVERSION=	1.1b
+PORTREVISION=   1
 CATEGORIES=	textproc java
 MASTER_SITES=	http://www.asamioffice.com/ja/2010/smartdoc/download/
 DISTFILES=	beta.zip
@@ -24,7 +25,7 @@ RUN_DEPENDS=	javavm:java/javavmwrapper \
 NO_BUILD=	yes
 USES=		zip
 USE_JAVA=	yes
-JAVA_VERSION=	1.6+
+JAVA_VERSION=	8+
 JAVA_EXTRACT=	jre
 JAVA_RUN=	jre
 EXTRACT_CMD=	${JAVA}
