@@ -269,7 +269,7 @@ GNUDBM_CONFIGURE_ON=	--with-database=gnudbm
 LDAP_CONFIGURE_ON=		--with-ldap
 LDAP_CONFIGURE_OFF=		--with-ldap=no
 POSTGRESQL_CONFIGURE_ON=--with-postgresql
-LDAP_USE=				OPENLDAP=yes
+LDAP_VARS=				USE_OPENLDAP=yes WANT_OPENLDAP_SASL=yes
 POSTGRES_CONFIGURE_OFF=	--without-postgresql
 POSTGRES_USES=			pgsql
 
