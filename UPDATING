@@ -6,6 +6,9 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20200309:
+	Change XEmacs to use openldap-sasl in accordance with Libereoffice.
+
 20200210:
 	Set PORTREVISION=1 according to JAVA_VERSION framework updated
 	(allowed values: 7[+] 8[+] 11[+] 12[+] 13[+]).
