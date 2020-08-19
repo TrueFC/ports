@@ -1,7 +1,7 @@
 #-*- tab-width: 4; -*-
 # ex:ts=4
 #
-# $FreeBSD: head/Mk/bsd.port.mk 540387 2020-06-25 12:37:30Z mat $
+# $FreeBSD: head/Mk/bsd.port.mk 544070 2020-08-03 13:53:06Z mat $
 #	$NetBSD: $
 #
 #	bsd.port.mk - 940820 Jordan K. Hubbard.
@@ -2021,7 +2021,7 @@ MAKE_ENV+=		LANG=${USE_LOCALE} LC_ALL=${USE_LOCALE}
 # Macro for doing in-place file editing using regexps
 REINPLACE_ARGS?=	-i.bak
 .if defined(DEVELOPER)
-REINPLACE_CMD?=	${SETENV} WRKSRC=${WRKSRC} REWARNFILE=${REWARNFILE} ${PORTSDIR}/Tools/scripts/sed_checked.sh
+REINPLACE_CMD?=	${SETENV} WRKSRC=${WRKSRC} REWARNFILE=${REWARNFILE} ${SCRIPTSDIR}/sed_checked.sh
 .else
 REINPLACE_CMD?=	${SED} ${REINPLACE_ARGS}
 .endif

@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20200819:
+	Update for ports revision 545209.
+	TAG: 545209 created for ports revision 545209.
+
 20200728:
 	Add devel/py-hypothesis (r531478) because www/py-html5lib@FLAVOR=py27
 	which is depended by www/chromium with package-recursive need python2

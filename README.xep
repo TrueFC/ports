@@ -1,6 +1,6 @@
-* XEPkgs の変更個所(revision:531478)
+* XEPkgs の変更個所(revision:545209)
 (1) bsd.default-versions.mk
-1) XEMACS_DEFAULT を追加(142 行あたり)
+1) XEMACS_DEFAULT を追加(146 行あたり)
 
 # Possible_values: basic canna devel devel_canna
 XEMACS_DEFAULT?=	basic
@@ -23,7 +23,7 @@ VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
 	x11-toolkits x11-wm xepkgs xfce zope base
 
 (3) bsd.site.mk
-1) MASTER_SITE_XEMACS の追加(1175 行あたり)
+1) MASTER_SITE_XEMACS の追加(1191 行あたり)
 MASTER_SITE_XCONTRIB の後に追加(注1)
 
 .if !defined(IGNORE_MASTER_SITE_XEMACS)
@@ -41,7 +41,7 @@ MASTER_SITE_XEMACS+= \
 #	ftp://ftp.yz.yamagata-u.ac.jp/pub/misc/xemacs/%SUBDIR%/
 .endif
 	
-2) MASTER_SITE_XEPKGS の追加(1190 行あたり)
+2) MASTER_SITE_XEPKGS の追加(1206 行あたり)
 MASTER_SITE_XEMACS の後に追加(注1)
 
 .if !defined(IGNORE_MASTER_SITE_XEPKGS)
@@ -59,7 +59,7 @@ MASTER_SITE_XEPKGS+= \
 #	ftp://ftp.yz.yamagata-u.ac.jp/pub/misc/xemacs/packages/%SUBDIR%/
 .endif
 
-3) XEP の追加(1262 行あたり)
+3) XEP の追加(1278 行あたり)
 MASTER_SITES_ABBREVS に XEP:XEPKGS を追加
 
 MASTER_SITES_ABBREVS=	CPAN:PERL_CPAN \

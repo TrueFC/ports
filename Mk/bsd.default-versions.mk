@@ -1,6 +1,10 @@
-# $FreeBSD: head/Mk/bsd.default-versions.mk 538219 2020-06-08 14:08:29Z mat $
+# $FreeBSD: head/Mk/bsd.default-versions.mk 544063 2020-08-03 12:56:29Z mat $
 #
 # MAINTAINER:	ports@FreeBSD.org
+#
+# Note: before committing to this file, contact portmgr to arrange for an
+# experimental ports run.  Untested commits may be backed out at portmgr's
+# discretion.
 #
 # Provide default versions for ports with multiple versions selectable
 # by the user.
@@ -65,12 +69,12 @@ LINUX_DEFAULT?=		c7
 LLVM_DEFAULT?=		90
 # Possible values: 5.1, 5.2, 5.3
 LUA_DEFAULT?=		5.2
-# Possible values: 5.5, 5.6, 5.7, 8.0, 5.5m, 10.1m, 10.2m, 10.3m, 10.4m, 5.5p, 5.6p, 5.7p, 5.6w
+# Possible values: 5.5, 5.6, 5.7, 8.0, 10.3m, 10.4m, 10.5m, 5.5p, 5.6p, 5.7p, 5.6w, 5.7w
 MYSQL_DEFAULT?=		5.7
 # Possible values: 5.28, 5.30, 5.32, devel
 .if !exists(${LOCALBASE}/bin/perl) || (!defined(_PORTS_ENV_CHECK) && \
     defined(PACKAGE_BUILDING))
-PERL5_DEFAULT?=		5.30
+PERL5_DEFAULT?=		5.32
 .elif !defined(PERL5_DEFAULT)
 # There's no need to replace development versions, like "5.23" with "devel"
 # because 1) nobody is supposed to use it outside of poudriere, and 2) it must
@@ -82,7 +86,7 @@ _PERL5_FROM_BIN!=	${LOCALBASE}/bin/perl -e 'printf "%vd\n", $$^V;'
 _EXPORTED_VARS+=	_PERL5_FROM_BIN
 PERL5_DEFAULT:=		${_PERL5_FROM_BIN:R}
 .endif
-# Possible values: 9.4, 9.5, 9.6, 10, 11, 12
+# Possible values: 9.5, 9.6, 10, 11, 12
 PGSQL_DEFAULT?=		11
 # Possible values: 7.2, 7.3, 7.4
 PHP_DEFAULT?=		7.2
