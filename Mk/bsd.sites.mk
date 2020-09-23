@@ -20,7 +20,7 @@
 #
 # Note: all entries should terminate with a slash.
 #
-# $FreeBSD: head/Mk/bsd.sites.mk 543005 2020-07-24 06:28:59Z rigoletto $
+# $FreeBSD: head/Mk/bsd.sites.mk 548881 2020-09-18 09:41:48Z 0mp $
 #
 
 # Where to put distfiles that don't have any other master site
@@ -609,7 +609,7 @@ post-extract-gl-DEFAULT:
 .  endif
 .  if !empty(_GITLAB_GROUPS:NDEFAULT)
 .    for _group in ${_GITLAB_GROUPS:NDEFAULT}
-# We set GL_SITE earlier, we need to verify its not empty
+# We set GL_SITE earlier, we need to verify it's not empty
 .      if empty(GL_SITE_${_group})
 GL_SITE_${_group}=	${GL_SITE_DEFAULT}
 .      endif
@@ -678,7 +678,6 @@ MASTER_SITE_GNU+= \
 	ftp://mirrors.rit.edu/gnu/%SUBDIR%/ \
 	ftp://ftp.fu-berlin.de/unix/gnu/%SUBDIR%/ \
 	ftp://ftp.mirrorservice.org/sites/ftp.gnu.org/gnu/%SUBDIR%/ \
-	ftp://ftp.cse.yzu.edu.tw/gnu/%SUBDIR%/ \
 	https://ftp.gnu.org/gnu/%SUBDIR%/
 .endif
 

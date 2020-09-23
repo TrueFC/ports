@@ -1,4 +1,4 @@
-* XEPkgs の変更個所(revision:545209)
+* XEPkgs の変更個所(revision:549555)
 (1) bsd.default-versions.mk
 1) XEMACS_DEFAULT を追加(146 行あたり)
 
@@ -59,7 +59,7 @@ MASTER_SITE_XEPKGS+= \
 #	ftp://ftp.yz.yamagata-u.ac.jp/pub/misc/xemacs/packages/%SUBDIR%/
 .endif
 
-3) XEP の追加(1278 行あたり)
+3) XEP の追加(1277 行あたり)
 MASTER_SITES_ABBREVS に XEP:XEPKGS を追加
 
 MASTER_SITES_ABBREVS=	CPAN:PERL_CPAN \

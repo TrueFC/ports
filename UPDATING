@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20200923:
+	Update for ports revision 549555.
+	TAG: 549555 created for ports revision 549555.
+
 20200819:
 	Update for ports revision 545209.
 	TAG: 545209 created for ports revision 545209.
