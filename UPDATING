@@ -6,6 +6,23 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20200928:
+	Set consistency in py27-* and py37-* ports dependency. Following ports
+	should be still remained with py27-*:
+
+	devel/py-hypothesis
+	devel/py-importlib-metadata
+	devel/py-pluggy
+	devel/py-pytest-cov
+	devel/py-pytest-forked
+	devel/py-pytest-mock
+	devel/py-pytest-rerunfailures
+	devel/py-pytest-timeout
+	devel/py-pytest-xdist
+	devel/py-pytest
+	devel/py-tox
+	devel/py-zipp
+
 20200923:
 	Update for ports revision 549555.
 	TAG: 549555 created for ports revision 549555.
