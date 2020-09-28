@@ -6,6 +6,15 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20200929:
+	Add devel/binutils because illegal PKGNAMEPREFIX produce when FLAVOR
+	null defined. Makefile should be modify this:
+
+	-.if ${FLAVOR} != native
+	+.if !empty(FLAVOR) && ${FLAVOR} != native
+
+	This bug still be retained from 20200724 ;-(
+
 20200928:
 	Set consistency in py27-* and py37-* ports dependency. Following ports
 	should be still remained with py27-*:
