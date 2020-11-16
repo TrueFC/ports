@@ -20,7 +20,7 @@
 #
 # Note: all entries should terminate with a slash.
 #
-# $FreeBSD: head/Mk/bsd.sites.mk 548881 2020-09-18 09:41:48Z 0mp $
+# $FreeBSD: head/Mk/bsd.sites.mk 552374 2020-10-15 03:38:05Z meta $
 #
 
 # Where to put distfiles that don't have any other master site
@@ -973,16 +973,7 @@ MASTER_SITE_PGSQL+= \
 
 .if !defined(IGNORE_MASTER_SITE_PHP)
 MASTER_SITE_PHP+= \
-	http://de.php.net/%SUBDIR%/ \
-	http://es.php.net/%SUBDIR%/ \
-	http://fr.php.net/%SUBDIR%/ \
-	http://it.php.net/%SUBDIR%/ \
-	http://jp.php.net/%SUBDIR%/ \
-	http://se.php.net/%SUBDIR%/ \
-	http://uk3.php.net/%SUBDIR%/ \
-	http://us2.php.net/%SUBDIR%/ \
-	http://br.php.net/%SUBDIR%/ \
-	http://cn.php.net/%SUBDIR%/
+	https://www.php.net/%SUBDIR%/
 .endif
 
 .if !defined(IGNORE_MASTER_SITE_PYTHON)
@@ -1059,7 +1050,7 @@ MASTER_SITE_SAVANNAH+= \
 .if !defined(IGNORE_MASTER_SITE_SOURCEFORGE)
 .for p in https http
 MASTER_SITE_SOURCEFORGE+= ${p}://downloads.sourceforge.net/project/%SUBDIR%/
-.for m in excellmedia freefr jaist kent nchc \
+.for m in excellmedia freefr jaist nchc \
 	netcologne netix superb-dca2 superb-sea2 ufpr vorboss
 MASTER_SITE_SOURCEFORGE+= ${p}://${m}.dl.sourceforge.net/project/%SUBDIR%/
 .endfor

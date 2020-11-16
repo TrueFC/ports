@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20201116:
+	Update for ports revision 555444.
+	TAG: 555444 created for ports revision 555444.
+
 20200929:
 	Add devel/binutils because illegal PKGNAMEPREFIX produce when FLAVOR
 	null defined. Makefile should be modify this:
