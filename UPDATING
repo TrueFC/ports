@@ -10,6 +10,13 @@ basically know what you are doing.
 	Update for ports revision 555444.
 	TAG: 555444 created for ports revision 555444.
 
+	Fix conversions for relevant ports:
+
+	devel/binutils
+	devel/py-hypothesis
+	devel/py-importlib-metadata
+	devel/py-zipp
+
 20200929:
 	Add devel/binutils because illegal PKGNAMEPREFIX produce when FLAVOR
 	null defined. Makefile should be modify this:

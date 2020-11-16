@@ -1,7 +1,7 @@
-# $FreeBSD: head/devel/py-zipp/Makefile 514685 2019-10-17 20:41:37Z antoine $
+# $FreeBSD: head/devel/py-zipp/Makefile 553729 2020-10-31 03:59:45Z swills $
 
 PORTNAME=	zipp
-PORTVERSION=	3.1.0
+PORTVERSION=	3.4.0
 CATEGORIES=	devel
 MASTER_SITES=	CHEESESHOP
 PKGNAMEPREFIX=	${PYTHON_PKGNAMEPREFIX}

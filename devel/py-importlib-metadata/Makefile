@@ -1,7 +1,7 @@
-# $FreeBSD: head/devel/py-importlib-metadata/Makefile 514279 2019-10-11 14:04:34Z swills $
+# $FreeBSD: head/devel/py-importlib-metadata/Makefile 549823 2020-09-23 19:10:17Z swills $
 
 PORTNAME=	importlib-metadata
-PORTVERSION=	1.7.0
+PORTVERSION=	2.0.0
 CATEGORIES=	devel
 MASTER_SITES=	CHEESESHOP
 PKGNAMEPREFIX=	${PYTHON_PKGNAMEPREFIX}
