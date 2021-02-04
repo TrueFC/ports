@@ -6,6 +6,13 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20210204:
+	Add sysutils/u-boot-pinebook-pro for display console by Jesper
+	Schmitz Mouridsen <jsm@FreeBSD.org> [1] which enable to display on
+	Pinebook Pro.
+
+	[1] https://github.com/jsm222/ports/tree/master/sysutils/u-boot-pinebook-pro
+
 20201116:
 	Update for ports revision 555444.
 	TAG: 555444 created for ports revision 555444.

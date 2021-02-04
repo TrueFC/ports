@@ -1,0 +1,10 @@
+--- arch/arm/dts/rk3399-pinebook-pro.dts.org	2021-02-03 10:01:30.650120000 +0900
++++ arch/arm/dts/rk3399-pinebook-pro.dts	2021-02-03 10:02:27.498534000 +0900
+@@ -290,7 +290,6 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&lcdvcc_en_gpio>;
+ 		regulator-name = "vcc3v3_panel";
+-		regulator-always-on;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		regulator-enable-ramp-delay = <100000>;

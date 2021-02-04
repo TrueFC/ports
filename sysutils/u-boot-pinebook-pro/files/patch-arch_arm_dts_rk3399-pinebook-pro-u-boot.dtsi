@@ -1,0 +1,13 @@
+--- arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi.org	2021-02-03 09:56:35.865812000 +0900
++++ arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi	2021-02-03 09:59:06.426001000 +0900
+@@ -20,6 +20,10 @@
+ 	};
+ };
+ 
++&edp {
++	rockchip,panel = <&edp_panel>;
++};
++
+ &i2c0 {
+ 	u-boot,dm-pre-reloc;
+ };
