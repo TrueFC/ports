@@ -1,19 +1,23 @@
-* XEPkgs の変更個所(revision:555444)
+* XEPkgs の変更個所(revision:ce3df03f4223)
 (1) bsd.default-versions.mk
-1) XEMACS_DEFAULT を追加(146 行あたり)
+1) XEMACS_DEFAULT を追加(154 行あたり)
 
 # Possible_values: basic canna devel devel_canna
 XEMACS_DEFAULT?=	basic
 
 (2) bsd.port.mk
-1) VALID_CATEGORIES リストに`xepkgs'を追加(2606 行あたり)
+1) VALID_CATEGORIES リストに`xepkgs'を追加(2626 行あたり)
 
 VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
-	benchmarks biology cad chinese comms converters databases \
-	deskutils devel dns docs editors elisp emulators enlightenment finance french ftp \
-	games geography german gnome gnustep graphics hamradio haskell hebrew hungarian \
-	irc japanese java kde ${_KDE_CATEGORIES_SUPPORTED} kld korean lang linux lisp \
-	mail mate math mbone misc multimedia net net-im net-mgmt net-p2p net-vpn news \
+	benchmarks biology cad chinese comms converters \
+	databases deskutils devel dns docs \
+	editors education elisp emulators enlightenment finance french ftp \
+	games geography german gnome gnustep graphics \
+	hamradio haskell hebrew hungarian irc japanese java \
+	kde ${_KDE_CATEGORIES_SUPPORTED} kld korean \
+	lang linux lisp \
+	mail mate math mbone misc multimedia \
+	net net-im net-mgmt net-p2p net-vpn news \
 	parallel pear perl5 plan9 polish ports-mgmt portuguese \
 	print python ruby rubygems russian \
 	scheme science security shells spanish sysutils \

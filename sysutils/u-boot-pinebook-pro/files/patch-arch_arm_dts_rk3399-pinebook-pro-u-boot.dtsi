@@ -1,5 +1,5 @@
---- arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi.org	2021-02-03 09:56:35.865812000 +0900
-+++ arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi	2021-02-03 09:59:06.426001000 +0900
+--- arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi.orig	2020-10-05 15:15:32 UTC
++++ arch/arm/dts/rk3399-pinebook-pro-u-boot.dtsi
 @@ -20,6 +20,10 @@
  	};
  };
