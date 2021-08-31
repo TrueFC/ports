@@ -6,6 +6,13 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20210831:
+	Update for ports revision 1e6092d18142.
+	TAG: 1e6092d18142 created for ports revision 1e6092d18142.
+
+	www/chromium (chromium-91.0.4472.164) could not built in
+	09b70ad03b05 and upgrade to 92.0.4515.159 in 1e6092d18142.
+	
 20210820:
 	Update for ports revision 09b70ad03b05.
 	TAG: 09b70ad03b05 created for ports revision 09b70ad03b05.
