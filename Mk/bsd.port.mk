@@ -63,7 +63,7 @@ FreeBSD_MAINTAINER=	portmgr@FreeBSD.org
 #				  In this case, incrementing PORTEPOCH forces the revision.
 #				  Default: 0 (no effect).
 # PKGNAME		- Always defined as
-#				  ${PKGNAMEPREFIX}${PORTNAME}${PKGNAMESUFFIX}-${PORTVERSION}.
+#				  ${PKGNAMEPREFIX}${PORTNAME}${PKGNAMESUFFIX}-${PKGVERSION}.
 #				  Do not define this in your Makefile.
 # PKGNAMEPREFIX	- Prefix to specify that port is language-specific, etc.
 #				  Optional.
@@ -71,7 +71,7 @@ FreeBSD_MAINTAINER=	portmgr@FreeBSD.org
 #				  designator (in case there are different versions of
 #				  one port as is the case for Tcl).
 #				  Optional.
-# PKGVERSION	- Always defined as ${PORTVERSION}.
+# PKGVERSION	- Version of package.
 #				  Do not define this in your Makefile.
 # DISTVERSION	- Vendor version of the distribution.
 #				  Default: ${PORTVERSION}
@@ -1177,7 +1177,7 @@ OSVERSION!=	${AWK} '/^\#define[[:blank:]]__FreeBSD_version/ {print $$3}' < ${SRC
 .endif
 _EXPORTED_VARS+=	OSVERSION
 
-.if (${OPSYS} == FreeBSD && (${OSVERSION} < 1104000 || (${OSVERSION} >= 1200000 && ${OSVERSION} < 1202000))) || \
+.if (${OPSYS} == FreeBSD && ${OSVERSION} < 1202000) || \
     (${OPSYS} == DragonFly && ${DFLYVERSION} < 400400)
 _UNSUPPORTED_SYSTEM_MESSAGE=	Ports Collection support for your ${OPSYS} version has ended, and no ports\
 								are guaranteed to build on this system. Please upgrade to a supported release.
@@ -1377,16 +1377,6 @@ PKGCOMPATDIR?=		${LOCALBASE}/lib/compat/pkg
 .sinclude "${odir}/Mk/bsd.overlay.mk"
 .endfor
 
-.if defined(USE_XORG) && (!defined(USES) || !${USES:Mxorg})
-DEV_WARNING+=		"Using USE_XORG alone is deprecated, please use USES=xorg"
-USES+=	xorg
-.endif
-
-.if defined(USE_PHP) && (!defined(USES) || ( defined(USES) && !${USES:Mphp*} ))
-DEV_WARNING+=		"Using USE_PHP alone is deprecated, please use USES=php"
-USES+=	php
-.endif
-
 .if defined(USE_JAVA)
 .include "${PORTSDIR}/Mk/bsd.java.mk"
 .endif
@@ -1414,26 +1404,6 @@ USES+=	apache:${USE_APACHE:C/2([0-9])/2.\1/g}
 
 .if defined(USE_GECKO)
 .include "${PORTSDIR}/Mk/bsd.gecko.mk"
-.endif
-
-.if (defined(USE_GNOME) || defined(INSTALLS_ICONS)) && empty(USES:Mgnome)
-DEV_WARNING+=	"Using USE_GNOME alone is deprecated, please add USES=gnome."
-USES+=	gnome
-.endif
-
-.if defined(USE_MATE) && empty(USES:Mmate)
-DEV_WARNING+=	"Using USE_MATE alone is deprecated, please add USES=mate."
-USES+=	mate
-.endif
-
-.if defined(USE_GL) && (!defined(USES) || !${USES:Mgl})
-DEV_WARNING+=	"Using USE_GL alone is deprecated, please add USES=gl."
-USES+=	gl
-.endif
-
-.if defined(USE_SDL) && (!defined(USES) || !${USES:Msdl})
-DEV_WARNING+=	"Using USE_SDL alone is deprecated, please add USES=sdl."
-USES+=	sdl
 .endif
 
 .if defined(USE_MYSQL)
@@ -1545,6 +1515,12 @@ ${v}+=	${${FLAVOR}_${v}}
 ${v}=	flavor "${FLAVOR}" ${${FLAVOR}_${v}}
 .endif
 .endfor
+.if defined(FLAVORS_SUB)
+PLIST_SUB+=	${FLAVORS:N${FLAVOR}:@v@${v:tu}="\@comment " NO_${v:tu}=""@}
+PLIST_SUB+=	${FLAVOR:tu}="" NO_${FLAVOR:tu}="@comment "
+SUB_LIST+=	${FLAVORS:N${FLAVOR}:@v@${v:tu}="\@comment " NO_${v:tu}=""@}
+SUB_LIST+=	${FLAVOR:tu}="" NO_${FLAVOR:tu}="@comment "
+.endif
 .endif # defined(${FLAVOR})
 
 
@@ -1623,9 +1599,11 @@ TEST_ENV?=		${MAKE_ENV}
 PKG_ENV+=		PORTSDIR=${PORTSDIR}
 CONFIGURE_ENV+=	XDG_DATA_HOME=${WRKDIR} \
 				XDG_CONFIG_HOME=${WRKDIR} \
+				XDG_CACHE_HOME=${WRKDIR}/.cache \
 				HOME=${WRKDIR}
 MAKE_ENV+=		XDG_DATA_HOME=${WRKDIR} \
 				XDG_CONFIG_HOME=${WRKDIR} \
+				XDG_CACHE_HOME=${WRKDIR}/.cache \
 				HOME=${WRKDIR}
 # Respect TMPDIR passed via make.conf or similar and pass it down
 # to configure and make.
@@ -1799,6 +1777,10 @@ INSTALL_TARGET:=	${INSTALL_TARGET:S/^install-strip$/install/g}
 .endif
 .endif
 
+.if defined(USE_LTO)
+.include "${PORTSDIR}/Mk/bsd.lto.mk"
+.endif
+
 .if !defined(WITHOUT_SSP)
 .include "${PORTSDIR}/Mk/bsd.ssp.mk"
 .endif
@@ -1958,11 +1940,6 @@ _FORCE_POST_PATTERNS=	rmdir kldxref mkfontscale mkfontdir fc-cache \
 .sinclude "${odir}/Mk/bsd.overlay.mk"
 .endfor
 
-.if defined(USE_XORG) && (!defined(USES) || ( defined(USES) && !${USES:Mxorg} ))
-DEV_WARNING+=	"Using USE_XORG alone is deprecated, please use USES=xorg"
-_USES_POST+=	xorg
-.endif
-
 .if defined(USE_GSTREAMER1)
 .include "${PORTSDIR}/Mk/bsd.gstreamer.mk"
 .endif
@@ -1973,11 +1950,6 @@ _USES_POST+=	xorg
 
 .if defined(USE_OCAML)
 .include "${PORTSDIR}/Mk/bsd.ocaml.mk"
-.endif
-
-.if defined(USE_PHP) && (!defined(USES) || ( defined(USES) && !${USES:Mphp*} ))
-DEV_WARNING+=		"Using USE_PHP alone is deprecated, please use USES=php"
-_USES_POST+=	php
 .endif
 
 .if defined(USE_WX) || defined(USE_WX_NOT)
@@ -3347,6 +3319,7 @@ check-build-conflicts:
 .endif
 
 .if !target(identify-install-conflicts)
+CONFLICT_WARNING_WAIT?=	10
 identify-install-conflicts:
 .if ( defined(CONFLICTS) || defined(CONFLICTS_INSTALL) ) && !defined(DISABLE_CONFLICTS)
 	@conflicts_with=$$( \
@@ -3365,7 +3338,7 @@ identify-install-conflicts:
 		${ECHO_MSG}; \
 		${ECHO_MSG} "      They install files into the same place."; \
 		${ECHO_MSG} "      You may want to stop build with Ctrl + C."; \
-		sleep 10; \
+		sleep ${CONFLICT_WARNING_WAIT}; \
 	fi
 .endif
 .endif
@@ -3967,7 +3940,9 @@ _CHECKSUM_INIT_ENV= \
 # checksum and sizes checks.
 makesum: check-sanity
 	@cd ${.CURDIR} && ${MAKE} fetch NO_CHECKSUM=yes \
-			DISABLE_SIZE=yes DISTFILES="${DISTFILES}"
+			DISABLE_SIZE=yes DISTFILES="${DISTFILES}" \
+			MASTER_SITES="${MASTER_SITES}" \
+			PATCH_SITES="${PATCH_SITES}"
 	@${SETENV} \
 			${_CHECKSUM_INIT_ENV} \
 			dp_CHECKSUM_ALGORITHMS='${CHECKSUM_ALGORITHMS:tu}' \
@@ -4100,7 +4075,7 @@ _FLAVOR_RECURSIVE_SH= \
 		${FALSE}; \
 	fi; \
 	for dir in $${recursive_dirs}; do \
-		unset flavor; \
+		unset flavor FLAVOR; \
 		case $${dir} in \
 			*@*/*) ;; \
 			*@*) \
@@ -4171,14 +4146,14 @@ fetch-specials:
 fetch-recursive:
 	@${ECHO_MSG} "===> Fetching all distfiles for ${PKGNAME} and dependencies"
 	@recursive_cmd="fetch"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif
 
 .if !target(fetch-recursive-list)
 fetch-recursive-list:
 	@recursive_cmd="fetch-list"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif
 
@@ -4245,7 +4220,7 @@ fetch-required-list: fetch-list
 checksum-recursive:
 	@${ECHO_MSG} "===> Fetching and checking checksums for ${PKGNAME} and dependencies"
 	@recursive_cmd="checksum"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif
 
@@ -4747,18 +4722,23 @@ flavors-package-names: .PHONY
 # Fake installation of package so that user can pkg delete it later.
 .if !target(fake-pkg)
 STAGE_ARGS=		-i ${STAGEDIR}
+.if defined(NO_PKG_REGISTER)
+STAGE_ARGS=	-N
+.endif
 
-.if !defined(NO_PKG_REGISTER)
 fake-pkg:
 .if defined(INSTALLS_DEPENDS)
+.if !defined(NO_PKG_REGISTER)
 	@${ECHO_MSG} "===>   Registering installation for ${PKGNAME} as automatic"
+.endif
 	@${SETENV} ${PKG_ENV} FORCE_POST="${_FORCE_POST_PATTERNS}" ${PKG_REGISTER} -d ${STAGE_ARGS} -m ${METADIR} -f ${TMPPLIST}
 .else
+.if !defined(NO_PKG_REGISTER)
 	@${ECHO_MSG} "===>   Registering installation for ${PKGNAME}"
+.endif
 	@${SETENV} ${PKG_ENV} FORCE_POST="${_FORCE_POST_PATTERNS}" ${PKG_REGISTER} ${STAGE_ARGS} -m ${METADIR} -f ${TMPPLIST}
 .endif
 	@${RM} -r ${METADIR}
-.endif
 .endif
 
 # Depend is generally meaningless for arbitrary ports, but if someone wants
@@ -5038,7 +5018,7 @@ config:
 config-recursive:
 	@${ECHO_MSG} "===> Setting user-specified options for ${PKGNAME} and dependencies";
 	@recursive_cmd="config-conditional"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif # config-recursive
 
@@ -5094,7 +5074,7 @@ showconfig: check-config
 showconfig-recursive:
 	@${ECHO_MSG} "===> The following configuration options are available for ${PKGNAME} and its dependencies";
 	@recursive_cmd="showconfig"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif # showconfig-recursive
 
@@ -5121,7 +5101,7 @@ rmconfig:
 rmconfig-recursive:
 	@${ECHO_MSG} "===> Removing user-specified options for ${PKGNAME} and its dependencies";
 	@recursive_cmd="rmconfig"; \
-	    recursive_dirs="${.CURDIR} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
+	    recursive_dirs="${.CURDIR}${FLAVOR:D@${FLAVOR}} $$(${ALL-DEPENDS-FLAVORS-LIST})"; \
 		${_FLAVOR_RECURSIVE_SH}
 .endif # rmconfig-recursive
 
