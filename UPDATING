@@ -6,6 +6,10 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20220104:
+	Update for ports revision 7216c1d263e8 (2022Q1 branch).
+	TAG: 7216c1d263e8 created for ports revision 7216c1d263e8.
+
 20211224:
 	Update for ports revision 2b11880f5800.
 	TAG: 2b11880f5800 created for ports revision 2b11880f5800.
