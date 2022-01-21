@@ -25,7 +25,6 @@ RUN_DEPENDS=	javavm:java/javavmwrapper \
 NO_BUILD=	yes
 USES=		zip
 USE_JAVA=	yes
-JAVA_VERSION=	8+
 JAVA_EXTRACT=	jre
 JAVA_RUN=	jre
 EXTRACT_CMD=	${JAVA}

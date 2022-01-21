@@ -6,6 +6,17 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20220121:
+	Update for ports revision 47d8fb3af3f0.
+	TAG: 47d8fb3af3f0 created for ports revision 47d8fb3af3f0.
+
+	sysutils/u-boot-pinebook-pro deleted because
+	sysutils/u-boot-pinebookpro upgraded to include all patches of
+	u-boot-pinebook-pro.
+
+	textproc/smartdoc-devel/Makefile: JAVA_VERSION deleted because
+	version 8 obsoleted.
+
 20220104:
 	Update for ports revision 7216c1d263e8 (2022Q1 branch).
 	TAG: 7216c1d263e8 created for ports revision 7216c1d263e8.
