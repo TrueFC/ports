@@ -6,6 +6,12 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20220223:
+	Update for ports revision e6f9334ca3b0.
+	TAG: e6f9334ca3b0 created for ports revision e6f9334ca3b0.
+
+	graphics/libdrm added for arm64/aarch64 extention.
+
 20220121:
 	Update for ports revision 47d8fb3af3f0.
 	TAG: 47d8fb3af3f0 created for ports revision 47d8fb3af3f0.
