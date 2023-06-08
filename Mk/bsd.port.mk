@@ -40,9 +40,9 @@ FreeBSD_MAINTAINER=	portmgr@FreeBSD.org
 #				  makefile is being used on.  Automatically set to
 #				  "FreeBSD," "NetBSD," or "OpenBSD" as appropriate.
 # OSREL			- The release version of the operating system as a text
-#				  string (e.g., "12.3").
+#				  string (e.g., "12.4").
 # OSVERSION		- The operating system version as a comparable integer;
-#				  the value of __FreeBSD_version (e.g., 1203000).
+#				  the value of __FreeBSD_version (e.g., 1204000).
 #
 # This is the beginning of the list of all variables that need to be
 # defined in a port, listed in order that they should be included
@@ -371,9 +371,6 @@ FreeBSD_MAINTAINER=	portmgr@FreeBSD.org
 # USE_OCAML		- If set, this port relies on the OCaml language.
 #				  Implies inclusion of bsd.ocaml.mk.  (Also see
 #				  that file for more information on USE_OCAML*).
-# USE_RUBY		- If set, this port relies on the Ruby language.
-#				  Implies inclusion of bsd.ruby.mk.  (Also see
-#				  that file for more information on USE_RUBY_*).
 ##
 # USE_GECKO		- If set, this port uses the Gecko/Mozilla product.
 #				  See bsd.gecko.mk for more details.
@@ -1183,7 +1180,7 @@ OSVERSION!=	${AWK} '/^\#define[[:blank:]]__FreeBSD_version/ {print $$3}' < ${SRC
 .    endif
 _EXPORTED_VARS+=	OSVERSION
 
-.    if ${OPSYS} == FreeBSD && (${OSVERSION} < 1203000 || (${OSVERSION} >= 1300000 && ${OSVERSION} < 1301000))
+.    if ${OPSYS} == FreeBSD && (${OSVERSION} < 1204000 || (${OSVERSION} >= 1300000 && ${OSVERSION} < 1301000))
 _UNSUPPORTED_SYSTEM_MESSAGE=	Ports Collection support for your ${OPSYS} version has ended, and no ports\
 								are guaranteed to build on this system. Please upgrade to a supported release.
 .      if defined(ALLOW_UNSUPPORTED_SYSTEM)
@@ -1389,10 +1386,6 @@ PKGCOMPATDIR?=		${LOCALBASE}/lib/compat/pkg
 
 .    if defined(USE_JAVA)
 .include "${PORTSDIR}/Mk/bsd.java.mk"
-.    endif
-
-.    if defined(USE_RUBY)
-.include "${PORTSDIR}/Mk/bsd.ruby.mk"
 .    endif
 
 .    if defined(USE_OCAML)
@@ -1640,8 +1633,7 @@ QA_ENV+=		STAGEDIR=${STAGEDIR} \
 				DISABLE_LICENSES="${DISABLE_LICENSES:Dyes}" \
 				PORTNAME=${PORTNAME} \
 				NO_ARCH=${NO_ARCH} \
-				"NO_ARCH_IGNORE=${NO_ARCH_IGNORE}" \
-				USE_RUBY=${USE_RUBY}
+				"NO_ARCH_IGNORE=${NO_ARCH_IGNORE}"
 .    if !empty(USES:Mssl)
 QA_ENV+=		USESSSL=yes
 .    endif
@@ -1871,10 +1863,6 @@ MAKE_ENV+=	${b}="${${b}}"
 .      endfor
 .    endif
 
-.    if defined(USE_OPENLDAP) || defined(WANT_OPENLDAP_VER)
-.include "${PORTSDIR}/Mk/bsd.ldap.mk"
-.    endif
-
 .    if defined(USE_RC_SUBR)
 SUB_FILES+=	${USE_RC_SUBR}
 .    endif
@@ -2053,7 +2041,7 @@ MAKE_JOBS_NUMBER=	1
 _MAKE_JOBS_NUMBER:=	${MAKE_JOBS_NUMBER}
 .      else
 .        if !defined(_SMP_CPUS)
-_SMP_CPUS!=		${SYSCTL} -n kern.smp.cpus
+_SMP_CPUS!=		${NPROC} 2>/dev/null || ${SYSCTL} -n kern.smp.cpus
 .        endif
 _EXPORTED_VARS+=	_SMP_CPUS
 _MAKE_JOBS_NUMBER=	${_SMP_CPUS}
@@ -2571,7 +2559,7 @@ check-categories:
 .    else
 
 VALID_CATEGORIES+= accessibility afterstep arabic archivers astro audio \
-	benchmarks biology cad chinese comms converters \
+	benchmarks biology budgie cad chinese comms converters \
 	databases deskutils devel dns docs \
 	editors education elisp emulators enlightenment finance french ftp \
 	games geography german gnome gnustep graphics \
@@ -3543,6 +3531,10 @@ install-ldconfig-file:
 fixup-lib-pkgconfig:
 	@if [ -d ${STAGEDIR}${PREFIX}/lib/pkgconfig ]; then \
 		if [ -z "$$(${FIND} ${STAGEDIR}${PREFIX}/lib/pkgconfig -maxdepth 0 -empty)" ]; then \
+			if [ -n "${DEVELOPER:Dyes}" ]; then \
+				${ECHO_MSG} "===>   File(s) found in lib/pkgconfig while correct path is libdata/pkgconfig"; \
+				${ECHO_MSG} "       Applying fix but consider using USES= pathfix or adjust install path"; \
+			fi; \
 			${MKDIR} ${STAGEDIR}${PREFIX}/libdata/pkgconfig; \
 			${MV} ${STAGEDIR}${PREFIX}/lib/pkgconfig/* ${STAGEDIR}${PREFIX}/libdata/pkgconfig; \
 		fi; \
