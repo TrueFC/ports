@@ -6,6 +6,11 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20230620:
+	Update for ports revision d830ac4c7cfd bacause previous revision
+	(1e1334634165) failed to build python codes.
+	TAG: d830ac4c7cfd created for ports revision d830ac4c7cfd.
+
 20230608:
 	Update for ports revision 1e1334634165.
 	TAG: 1e1334634165 created for ports revision 1e1334634165.
