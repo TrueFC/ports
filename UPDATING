@@ -6,6 +6,12 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20230626:
+	All unnecessary ports (graphics/libdrm, japanese/man-doc,
+	devel/{binutils,py-*,ruby-gems}) were removed.
+
+	Tag reset to d830ac4c7cfd.
+
 20230620:
 	Update for ports revision d830ac4c7cfd bacause previous revision
 	(1e1334634165) failed to build python codes.
