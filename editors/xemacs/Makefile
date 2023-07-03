@@ -12,7 +12,7 @@ DIST_SUBDIR=	xemacs
 MAINTAINER?=	xemacs@FreeBSD.org
 COMMENT?=	The stable version of the XEmacs text editor
 
-BUILD_DEPENDS=	autoconf-2.13:${PORTSDIR}/devel/autoconf213
+BUILD_DEPENDS=	autoconf2.13:${PORTSDIR}/devel/autoconf2.13
 .if !defined(XEMACS_ARCH_INDEP) && defined(L10N)
 RUN_DEPENDS=	${LOCALBASE}/lib/${DISTNAME}/etc/README:${PORTSDIR}/editors/xemacs
 .endif
@@ -20,8 +20,8 @@ RUN_DEPENDS=	${LOCALBASE}/lib/${DISTNAME}/etc/README:${PORTSDIR}/editors/xemacs
 LICENSE=	GPLv2
 LICENSE_FILE=	${WRKSRC}/COPYING
 
-CONFLICTS?=	emacs21-[0-9]* emacs22-[0-9]* emacs23-[0-9]* emacs24-[0-9]* \
-		emacs-nox11-[0-9]* xemacs-devel-[0-9]* ja-xemacs-devel-* \
+CONFLICTS?=	emacs-[0-9]* emacs-devel-[0-9]* \
+		xemacs-devel-[0-9]* ja-xemacs-devel-* \
 		xemacs-common-[0-9]*  xemacs-devel-common-[0-9]*
 
 XEMACS_REL=	21.4
@@ -74,8 +74,8 @@ PKGNAMEPREFIX=
 PORTNAME=	xemacs
 PKGNAMESUFFIX=	-common
 COMMENT=	The architecuture independent part of XEmacs stable version
-CONFLICTS=	emacs21-[0-9]* emacs22-[0-9]* emacs23-[0-9]* emacs24-[0-9]* \
-		emacs-nox11-[0-9]* xemacs-[0-9]* xemacs-devel-[0-9]* \
+CONFLICTS=	emacs-[0-9]* emacs-devel-[0-9]* \
+		xemacs-[0-9]* xemacs-devel-[0-9]* \
 		xemacs-devel-common-[0-9]* ja-xemacs-devel-*
 MASTERDIR=	${.CURDIR}
 .elif defined(L10N)
@@ -118,7 +118,7 @@ pre-configure:
 	@${SED} -e 's/\.1/&.gz/' ${WRKSRC}/${f} > ${WRKDIR}/tmp_zot
 	@${MV} ${WRKDIR}/tmp_zot ${WRKSRC}/${f}
 .endfor
-	(cd ${WRKSRC} && ${LOCALBASE}/bin/autoconf-2.13)
+	(cd ${WRKSRC} && ${LOCALBASE}/bin/autoconf2.13)
 
 pre-build:
 	${FIND} ${WRKSRC} \( -name \*~ -o -name \*.core -o -name \*.elc \) \

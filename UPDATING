@@ -6,6 +6,14 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20230703:
+	Autoconf-2.13 port changed it's portname and binary path. So
+	editors/xemacs changed BUILD_DEPENDS and execution scripts in
+	pre-configure target.
+
+	editors/xemacs and japanese/xemacs-canna also changed CONFLICTS
+	because of updated emacs* ports.
+	
 20230626:
 	All unnecessary ports (graphics/libdrm, japanese/man-doc,
 	devel/{binutils,py-*,ruby-gems}) were removed.
