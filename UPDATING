@@ -6,6 +6,21 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20230731:
+	- Add devel/libbson, devel/mongo-c-driver
+	According to update to OpenSSL-3.0, some function does not support
+	anymore. So both updated to 1.24.2. BTW these are already updated
+	in latest ports tree.
+
+	- Add www/nginx
+	std::random_shuffle has been removed from C++17, so modules which use
+	that (passenger) has to be compiled with C++14 or lower. Added below
+	to Makefile :
+
+	.if ${PORT_OPTIONS:MPASSENGER} && ${OSVERSION} >= 1400091
+	CONFIGURE_ENV+=	EXTRA_PRE_CXXFLAGS="-std=c++14"
+	.endif
+
 20230719:
 	Update for ports revision b704b729f179.
 	TAG: b704b729f179 created for ports revision b704b729f179.
