@@ -6,6 +6,14 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20231009:
+	Update for ports revision 9ce8c29b90c7.
+	TAG: 9ce8c29b90c7 created for ports revision 9ce8c29b90c7.
+
+	- Update C++14 patch (see 20230731) to nginx-1.24.0_12,3
+	
+	- Delete devel/libbson, devel/mongo-c-driver (see 20230731).
+
 20230731:
 	- Add devel/libbson, devel/mongo-c-driver
 	According to update to OpenSSL-3.0, some function does not support

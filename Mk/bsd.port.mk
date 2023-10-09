@@ -1186,7 +1186,7 @@ OSVERSION!=	${AWK} '/^\#define[[:blank:]]__FreeBSD_version/ {print $$3}' < ${SRC
 .    endif
 _EXPORTED_VARS+=	OSVERSION
 
-.    if ${OPSYS} == FreeBSD && (${OSVERSION} < 1204000 || (${OSVERSION} >= 1300000 && ${OSVERSION} < 1301000))
+.    if ${OPSYS} == FreeBSD && (${OSVERSION} < 1204000 || (${OSVERSION} >= 1300000 && ${OSVERSION} < 1302000))
 _UNSUPPORTED_SYSTEM_MESSAGE=	Ports Collection support for your ${OPSYS} version has ended, and no ports\
 								are guaranteed to build on this system. Please upgrade to a supported release.
 .      if defined(ALLOW_UNSUPPORTED_SYSTEM)
@@ -1650,6 +1650,7 @@ QA_ENV+=		STAGEDIR=${STAGEDIR} \
 				PKGORIGIN=${PKGORIGIN} \
 				LIB_RUN_DEPENDS='${_LIB_RUN_DEPENDS:C,[^:]*:([^:]*):?.*,\1,}' \
 				UNIFIED_DEPENDS=${_UNIFIED_DEPENDS:C,([^:]*:[^:]*):?.*,\1,:O:u:Q} \
+				WANTED_LIBRARIES='${LIB_DEPENDS:C,([^:]*):([^:]*):?.*,\1,}' \
 				PKGBASE=${PKGBASE} \
 				LICENSE="${LICENSE}" \
 				LICENSE_PERMS="${_LICENSE_PERMS}" \
