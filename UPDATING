@@ -6,6 +6,14 @@ COMMON ITEMS: section later in the file.  These instructions assume that you
 basically know what you are doing.
 
 
+20231023:
+	- Add unbroken math/py-scikit-umfpack[1] because of audio/audacity
+	  successfully build. 
+	
+	- Add www/nginx-full because slave port should be same tree.
+
+	[1] https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=274518
+
 20231009:
 	Update for ports revision 9ce8c29b90c7.
 	TAG: 9ce8c29b90c7 created for ports revision 9ce8c29b90c7.
